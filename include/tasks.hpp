@@ -3,7 +3,8 @@
 
 #include "main.h"
 #include "setup.hpp"
-
+#include "assets/img_field.c"
+LV_IMG_DECLARE(img_field);
 double sign(double input) {
 	if (input == 0) return 1;
 	return fabs(input) / input;
@@ -143,7 +144,62 @@ void kickerTask() {
 		pros::delay(10);
 	}
 }
+//CONSTANTS
+static int MAP_CENTER_X = 0;
+static int MAP_CENTER_Y = 0;
+static int CIRCLE_RADIUS = 15;
+static lv_style_t style;
+static lv_style_t headingStyle;
 
+//MUTABLE OBJECTS
+lv_obj_t * headingIndicator;
+lv_obj_t * arc;
+
+void initVisualizer(){
+  //BG
+  lv_obj_t * bar1 = lv_bar_create(lv_scr_act(), NULL);
+lv_obj_set_size(bar1, MAP_CENTER_X*2, MAP_CENTER_Y*2);
+lv_obj_align(bar1, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+lv_bar_set_value(bar1, 0);
+
+
+lv_obj_t * img1 = lv_img_create(lv_scr_act(), NULL);
+lv_img_set_src(img1, &img_field);
+lv_obj_align(img1, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+
+
+
+static lv_style_t style_bar;
+lv_style_copy(&style_bar, &lv_style_pretty);
+style_bar.body.main_color = LV_COLOR_BLACK;
+style_bar.body.grad_color = LV_COLOR_BLACK;
+style_bar.body.radius = 0;
+style_bar.body.border.color = LV_COLOR_BLACK;
+
+lv_bar_set_style(bar1, LV_BAR_STYLE_BG, &style_bar);
+
+
+//ARC SETUP
+lv_style_copy(&style, &lv_style_plain);
+style.line.color = LV_COLOR_RED;           /*Arc color*/
+style.line.width = 2;         
+              /*Arc width*/
+ arc= lv_arc_create(lv_scr_act(), NULL);
+lv_arc_set_style(arc, LV_ARC_STYLE_MAIN, &style);          /*Use the new style*/
+lv_arc_set_angles(arc, 0, 360);
+lv_obj_set_size(arc, CIRCLE_RADIUS*2, CIRCLE_RADIUS*2);
+
+//LINE SETUP
+
+lv_style_copy(&headingStyle, &lv_style_plain);
+headingStyle.line.color = LV_COLOR_RED;
+headingStyle.line.width = 3;
+
+headingIndicator = lv_line_create(lv_scr_act(), NULL);
+lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+lv_line_set_style(headingIndicator,&headingStyle);
+
+}
 // keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
 double lastHeading;
 void odometryTask() {
@@ -183,6 +239,17 @@ void odometryTask() {
 	yPos-=localLength*sin(global_polar_angle);
 
 	lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
+ 
+ //UPDATE ROBOT POSITION VISUALIZATION
+  double BOT_POS_X = MAP_CENTER_X+(yPos*(1.6666));
+  double BOT_POS_Y = MAP_CENTER_Y+(xPos*(1.6666));
+
+  //SHOW ROBOT POSITION CIRCLE
+lv_obj_align(arc, NULL, LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-CIRCLE_RADIUS, BOT_POS_Y-CIRCLE_RADIUS);
+
+//SETUP ARRAY FOR HEADING VISUALIZER
+ lv_point_t line_points[] = { {BOT_POS_X,BOT_POS_Y},{BOT_POS_X+(CIRCLE_RADIUS-1)*cos(lastHeading),BOT_POS_Y-(CIRCLE_RADIUS-1)*sin(lastHeading)} };
+lv_line_set_points(headingIndicator, line_points, 2); 
 	}
 }
 

@@ -12,6 +12,7 @@
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	initVisualizer();
 	kicker_task.suspend();
 	kicker.moveVelocity(0);
 	odom_task.suspend();

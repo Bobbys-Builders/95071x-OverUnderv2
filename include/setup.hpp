@@ -42,6 +42,8 @@ const int IMU_PORT = 16; // imu
 
 const char CLMU_PORT = 'F'; // climb
 const char CLMD_PORT = 'B';
+
+
 const char FLP_PORT = 'D'; // wings
 const char FRP_PORT = 'D';
 const char BLP_PORT = 'A';
