@@ -200,6 +200,19 @@ lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 lv_line_set_style(headingIndicator,&headingStyle);
 
 }
+void updateVisualizer(){
+  
+ //UPDATE ROBOT POSITION VISUALIZATION
+  double BOT_POS_X = MAP_CENTER_X+(yPos*(1.6666));
+  double BOT_POS_Y = MAP_CENTER_Y+(xPos*(1.6666));
+
+  //SHOW ROBOT POSITION CIRCLE
+lv_obj_align(arc, NULL, LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-CIRCLE_RADIUS, BOT_POS_Y-CIRCLE_RADIUS);
+
+//SETUP ARRAY FOR HEADING VISUALIZER
+ lv_point_t line_points[] = { {BOT_POS_X,BOT_POS_Y},{BOT_POS_X+(CIRCLE_RADIUS-1)*cos(lastHeading),BOT_POS_Y-(CIRCLE_RADIUS-1)*sin(lastHeading)} };
+lv_line_set_points(headingIndicator, line_points, 2); 
+}
 // keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
 double lastHeading;
 void odometryTask() {
@@ -239,17 +252,7 @@ void odometryTask() {
 	yPos-=localLength*sin(global_polar_angle);
 
 	lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
- 
- //UPDATE ROBOT POSITION VISUALIZATION
-  double BOT_POS_X = MAP_CENTER_X+(yPos*(1.6666));
-  double BOT_POS_Y = MAP_CENTER_Y+(xPos*(1.6666));
-
-  //SHOW ROBOT POSITION CIRCLE
-lv_obj_align(arc, NULL, LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-CIRCLE_RADIUS, BOT_POS_Y-CIRCLE_RADIUS);
-
-//SETUP ARRAY FOR HEADING VISUALIZER
- lv_point_t line_points[] = { {BOT_POS_X,BOT_POS_Y},{BOT_POS_X+(CIRCLE_RADIUS-1)*cos(lastHeading),BOT_POS_Y-(CIRCLE_RADIUS-1)*sin(lastHeading)} };
-lv_line_set_points(headingIndicator, line_points, 2); 
+ updateVisualizer();
 	}
 }
 
