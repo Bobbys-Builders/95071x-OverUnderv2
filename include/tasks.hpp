@@ -268,11 +268,126 @@ void botMove(double dist, double vel, bool brake = true, bool block = true) {
   if (block && brake) drive.stop();
 }
 
-double maxMoveSpeed = 450;
+// double maxMoveSpeed = 450;
+// double maxTurnSpeed = 350;
+// double moveConstant = 120;
+// double turnConstant = 35;
+// double maxTurnConstant = 35;
+// bool driveDisabled = true;
+// bool arcMovement = false;
+// int driveMode = 0; // 0-both, 1-forwards, 2-backwards
+// double targetX = 0;
+// double targetY = 0;
+// void setTargetPos(double x, double y) {
+//   targetX = x;
+//   targetY = y;
+//   pros::delay(30);
+//   turnConstant = maxTurnConstant;
+// }
+// void driveAutoTask() {
+//   double moveTarget = 0;
+//   double turnTarget = 0;
+//   double moveVelocity = 0;
+//   double turnVelocity = 0;
+//   double moveAccel = 15;
+//   double turnAccel = 15;
+//   bool lastDriveForward = true;
+//   bool lastTurnPositive = true;
+//   double lastHeading = drive.imu.get_heading();
+
+//   while (true) {
+//     if (!arcMovement && positionError(targetX, targetY) > 1.5) {
+//       if ((fabs(headingError(targetX, targetY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+//         if (!lastDriveForward) {
+//           turnConstant = maxTurnConstant;
+//         }
+//         if (headingError(targetX, targetY) < -2) {
+//           if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
+//           lastTurnPositive = false;
+//         } else if (headingError(targetX, targetY) > 2) {
+//           if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
+//           lastTurnPositive = true;
+//         }
+//         if (fabs(headingError(targetX, targetY)) > 90) {
+//           turnConstant = maxTurnConstant;
+//         }
+//         turnTarget = sign(headingError(targetX, targetY)) * fmin(sqrt(fabs(headingError(targetX, targetY))) * turnConstant, maxTurnSpeed);
+
+//         lastDriveForward = true;
+//       } else {
+//         if (lastDriveForward) {
+//           turnConstant = maxTurnConstant;
+//         }
+//         if (headingError(heading(targetX, targetY) + 180) < -2) {
+//           if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
+//           lastTurnPositive = false;
+//         } else if (headingError(heading(targetX, targetY) + 180) > 2) {
+//           if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
+//           lastTurnPositive = true;
+//         }
+//         if (fabs(headingError(targetX, targetY)) > 90) {
+//           turnConstant = maxTurnConstant;
+//         }
+//         turnTarget = sign(headingError(heading(targetX, targetY) + 180)) * fmin(sqrt(fabs(headingError(heading(targetX, targetY) + 180))) * turnConstant, maxTurnSpeed);
+
+//         lastDriveForward = false;
+//       }
+
+//       moveTarget = fmin(sqrt(fabs(positionError(targetX, targetY))) * moveConstant, maxMoveSpeed) * cos(headingError(targetX, targetY) * RADIANS_DEGREE);
+//       moveAccel = 15;
+//       turnAccel = 15;
+//     } else if (arcMovement  && positionError(targetX, targetY) > 1.5) {
+//       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
+//       moveTarget = fmin(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * moveConstant, maxMoveSpeed) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE));
+//       moveAccel = 30;
+//       turnAccel = 30;
+//     } else {
+//       moveTarget = 0;
+//       turnTarget = 0;
+//       moveAccel = 15;
+//       turnAccel = 15;
+//     }
+
+//     if (moveVelocity < moveTarget) {
+//       moveVelocity += fmin(12, moveTarget - moveVelocity);
+//     }
+//     if (moveVelocity > moveTarget) {
+//       moveVelocity -= fmin(12, moveVelocity - moveTarget);
+//     }
+//     if (turnVelocity < turnTarget) {
+//       turnVelocity += fmin(12, turnTarget - turnVelocity);
+//     }
+//     if (turnVelocity > turnTarget) {
+//       turnVelocity -= fmin(12, turnVelocity - turnTarget);
+//     }
+
+//     if (driveDisabled) {
+//       moveVelocity = 0;
+//       turnVelocity = 0;
+//     } else if (!arcMovement) {    
+//       double headingDerivative = headingError(lastHeading);
+//       drive.moveVelocityLeft(moveVelocity + turnVelocity + headingDerivative * 40);
+//       drive.moveVelocityRight(moveVelocity - turnVelocity - headingDerivative * 40);
+//     } else if (arcMovement) {
+//       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
+//       drive.moveVelocityLeft(moveVelocity * (radius + 10 / 2)/radius);
+//       drive.moveVelocityRight(moveVelocity * (radius - 10 / 2)/radius);
+//     }
+//     lastHeading = drive.imu.get_heading();
+
+//     pros::delay(10);
+
+//     // controller.print(0, 0, "%.1f %.1f %.1f", xPos, yPos, drive.imu.get_heading());
+//     // std::cout << xPosition << " "
+//     //  << yPosition << " "
+//     //  << -headingError(0) << " "
+//     //  << moveVelocity << " " 
+//     //  << turnVelocity << std::endl;
+//   }
+// }
+
+double maxMoveSpeed = 550;
 double maxTurnSpeed = 350;
-double moveConstant = 120;
-double turnConstant = 35;
-double maxTurnConstant = 35;
 bool driveDisabled = true;
 bool arcMovement = false;
 int driveMode = 0; // 0-both, 1-forwards, 2-backwards
@@ -282,98 +397,34 @@ void setTargetPos(double x, double y) {
   targetX = x;
   targetY = y;
   pros::delay(30);
-  turnConstant = maxTurnConstant;
 }
 void driveAutoTask() {
-  double moveTarget = 0;
-  double turnTarget = 0;
-  double moveVelocity = 0;
-  double turnVelocity = 0;
-  double moveAccel = 15;
-  double turnAccel = 15;
-  bool lastDriveForward = true;
-  bool lastTurnPositive = true;
-  double lastHeading = drive.imu.get_heading();
-
   while (true) {
-    if (!arcMovement && positionError(targetX, targetY) > 1.5) {
+    if (!arcMovement && positionError(targetX, targetY) > 0.5) {
       if ((fabs(headingError(targetX, targetY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
-        if (!lastDriveForward) {
-          turnConstant = maxTurnConstant;
-        }
-        if (headingError(targetX, targetY) < -2) {
-          if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-          lastTurnPositive = false;
-        } else if (headingError(targetX, targetY) > 2) {
-          if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-          lastTurnPositive = true;
-        }
-        if (fabs(headingError(targetX, targetY)) > 90) {
-          turnConstant = maxTurnConstant;
-        }
-        turnTarget = sign(headingError(targetX, targetY)) * fmin(sqrt(fabs(headingError(targetX, targetY))) * turnConstant, maxTurnSpeed);
-
-        lastDriveForward = true;
+        turnPID.update(headingError(targetX, targetY));
       } else {
-        if (lastDriveForward) {
-          turnConstant = maxTurnConstant;
-        }
-        if (headingError(heading(targetX, targetY) + 180) < -2) {
-          if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-          lastTurnPositive = false;
-        } else if (headingError(heading(targetX, targetY) + 180) > 2) {
-          if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-          lastTurnPositive = true;
-        }
-        if (fabs(headingError(targetX, targetY)) > 90) {
-          turnConstant = maxTurnConstant;
-        }
-        turnTarget = sign(headingError(heading(targetX, targetY) + 180)) * fmin(sqrt(fabs(headingError(heading(targetX, targetY) + 180))) * turnConstant, maxTurnSpeed);
-
-        lastDriveForward = false;
+        turnPID.update(headingError(heading(targetX, targetY) + 180));
       }
-
-      moveTarget = fmin(sqrt(fabs(positionError(targetX, targetY))) * moveConstant, maxMoveSpeed) * cos(headingError(targetX, targetY) * RADIANS_DEGREE);
-      moveAccel = 15;
-      turnAccel = 15;
-    } else if (arcMovement  && positionError(targetX, targetY) > 1.5) {
+      movePID.update(positionError(targetX, targetY) * cos(headingError(targetX, targetY) * RADIANS_DEGREE));
+    } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-      moveTarget = fmin(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * moveConstant, maxMoveSpeed) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE));
-      moveAccel = 30;
-      turnAccel = 30;
+      movePID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
     } else {
-      moveTarget = 0;
-      turnTarget = 0;
-      moveAccel = 15;
-      turnAccel = 15;
+      movePID.update(0);
+      turnPID.update(0);
     }
 
-    if (moveVelocity < moveTarget) {
-      moveVelocity += fmin(12, moveTarget - moveVelocity);
-    }
-    if (moveVelocity > moveTarget) {
-      moveVelocity -= fmin(12, moveVelocity - moveTarget);
-    }
-    if (turnVelocity < turnTarget) {
-      turnVelocity += fmin(12, turnTarget - turnVelocity);
-    }
-    if (turnVelocity > turnTarget) {
-      turnVelocity -= fmin(12, turnVelocity - turnTarget);
-    }
-
-    if (driveDisabled) {
-      moveVelocity = 0;
-      turnVelocity = 0;
-    } else if (!arcMovement) {    
-      double headingDerivative = headingError(lastHeading);
-      drive.moveVelocityLeft(moveVelocity + turnVelocity + headingDerivative * 40);
-      drive.moveVelocityRight(moveVelocity - turnVelocity - headingDerivative * 40);
+    movePID.maxLim = maxMoveSpeed;
+    turnPID.maxLim = maxTurnSpeed;
+    if (!driveDisabled && !arcMovement) {    
+      drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
+      drive.moveVelocityRight(movePID.calculateOut() - turnPID.calculateOut());
     } else if (arcMovement) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-      drive.moveVelocityLeft(moveVelocity * (radius + 10 / 2)/radius);
-      drive.moveVelocityRight(moveVelocity * (radius - 10 / 2)/radius);
+      drive.moveVelocityLeft(movePID.calculateOut() * (radius + 10 / 2)/radius);
+      drive.moveVelocityRight(movePID.calculateOut() * (radius - 10 / 2)/radius);
     }
-    lastHeading = drive.imu.get_heading();
 
     pros::delay(10);
 

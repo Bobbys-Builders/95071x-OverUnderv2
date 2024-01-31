@@ -12,19 +12,22 @@ void testAuton() {
     driveDisabled = false;
     driveMode = 1;
 
-    maxMoveSpeed = 450;
-    setTargetPos(xPos+12, yPos+24);
+    maxMoveSpeed = 300;
+    setTargetPos(xPos, yPos+12);
     // pros::delay(1000);
-    untilTargetPos(5, 5000);
+    untilTargetPos(1, 5000);
+    maxMoveSpeed = 0;
+    pros::delay(2500);
+    controller.print(0, 0, "%.0f                             ", (positionError(targetX, targetY)));
+    pros::delay(2500);
     driveDisabled = true;
     drive.stop();
-    // pros::delay(5000);
 }
 
 void noAuton() {}
 
 void closeSafePreauton() {
-    maxTurnConstant = 20;
+    // maxTurnConstant = 20;
     drive.hold();
     drive.imu.set_heading(0);
     driveDisabled = false;
@@ -47,7 +50,7 @@ void closeSafePreauton() {
     driveDisabled = true;
     driveMode = 0;
     maxMoveSpeed = 450;
-    maxTurnConstant = 35;
+    // maxTurnConstant = 35;
     drive.stop();
 }
 
@@ -105,7 +108,7 @@ void closeSafeAuton() {
 
 void closePreauton() {
     drive.hold();
-    maxTurnConstant = 20;
+    // maxTurnConstant = 20;
     drive.imu.set_heading(-90);
     driveDisabled = false;
     setPos(5*24+6, 1*24+7.5);
@@ -125,7 +128,7 @@ void closePreauton() {
     
     driveDisabled = true;
     driveMode = 0;
-    maxTurnConstant = 35;
+    // maxTurnConstant = 35;
     maxMoveSpeed = 450;
     drive.stop();
 
@@ -260,7 +263,7 @@ void closeAuton() {
 
 void closeElimPreauton() {
     drive.hold();
-    maxTurnConstant = 20;
+    // maxTurnConstant = 20;
     drive.imu.set_heading(-90);
     driveDisabled = false;
     setPos(5*24+6, 1*24+7.5);
@@ -279,7 +282,7 @@ void closeElimPreauton() {
     // untilTargetH(2, 3000);
     
     driveDisabled = true;
-    maxTurnConstant = 35;
+    // maxTurnConstant = 35;
     driveMode = 0;
     maxMoveSpeed = 450;
     drive.stop();
@@ -423,7 +426,7 @@ void closeElimAuton() {
 
 void farSafePreauton() {
     drive.hold();
-    maxTurnConstant = 20;
+    // maxTurnConstant = 20;
     drive.imu.set_heading(-90);
     driveDisabled = false;
     setPos(5*24+6, 5*24-7.5);
@@ -444,7 +447,7 @@ void farSafePreauton() {
     driveDisabled = true;
     driveMode = 0;
     maxMoveSpeed = 450;
-    maxTurnConstant = 35;
+    // maxTurnConstant = 35;
     drive.stop();
 }
 
@@ -487,7 +490,7 @@ void farSafeAuton() {
 
 void skillsPreauton() {
     drive.hold();
-    maxTurnConstant = 20;
+    // maxTurnConstant = 20;
     drive.imu.set_heading(-90);
     driveDisabled = false;
     setPos(5*24+6, 1*24+7.5);
@@ -507,7 +510,7 @@ void skillsPreauton() {
     driveMode = 0;
     maxMoveSpeed = 450;
     maxTurnSpeed = 350;
-    maxTurnConstant = 35;
+    // maxTurnConstant = 35;
     drive.stop();
 }
 

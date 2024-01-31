@@ -7,6 +7,7 @@
 #include "mechanisms/kicker.hpp"
 #include "mechanisms/wings.hpp"
 #include "mechanisms/climb.hpp"
+#include "pid.hpp"
 
 #define M_PI 3.14159265358979323846  /* pi */
 #define M_E 2.7182818284590452353602874713526624977572
@@ -59,5 +60,9 @@ Intake intake(INT_PORT);
 Kicker kicker(KCKL_PORT, KCKR_PORT, KCKROT_PORT);
 Climb climb(EXP_PORT, CLMU_PORT, CLMD_PORT);
 Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
+
+// pid
+Pid movePID(0, 120, 0.001, 15, 20000, 600, 0);
+Pid turnPID(0, 2, 0.0001, 0.2, 5000, 600, 0); 
 
 #endif

@@ -15,12 +15,12 @@ public:
 
     // control
     void climbUp() {
-        CLMDPiston.set_value(true);
+        // CLMDPiston.set_value(true);
         CLMUPiston.set_value(true);
     }
 
     void climbDown() {
-        CLMDPiston.set_value(false);
+        CLMDPiston.set_value(true);
         CLMUPiston.set_value(false);
     }
 };
