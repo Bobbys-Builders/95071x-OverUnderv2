@@ -14,12 +14,17 @@ void testAuton() {
 
     maxMoveSpeed = 300;
     setTargetPos(xPos, yPos+12);
+    maxTurnSpeed = 0;
+    driveMode = 2;
+    untilTargetH(90, 2000);
     // pros::delay(1000);
-    untilTargetPos(1, 5000);
-    maxMoveSpeed = 0;
+    // untilTargetPos(1, 5000);
+    // maxMoveSpeed = 0;
+    print_task.suspend();
     pros::delay(2500);
     controller.print(0, 0, "%.0f                             ", (positionError(targetX, targetY)));
     pros::delay(2500);
+    print_task.resume();
     driveDisabled = true;
     drive.stop();
 }
