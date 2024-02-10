@@ -32,7 +32,7 @@ void updateButtons() {
     BMode = controller.get_digital(DIGITAL_B);
 
 	if (R1Mode || R2Mode || L1Mode || L2Mode || XMode || BMode || fabs(controller.get_analog(ANALOG_LEFT_Y)) > 20 || fabs(controller.get_analog(ANALOG_RIGHT_X)) > 20) {
-		// drive.odomPiston.set_value(true);
+		drive.odomPiston.set_value(true);
 	}
 }
 
