@@ -115,6 +115,10 @@ void autonomous() {
 		break;
 
 		case 5:
+		farSafe6Auton();
+		break;
+
+		case 6:
 		skillsAuton();
 		break;
 	}
@@ -187,6 +191,10 @@ void opcontrol() {
 						break;
 
 						case 5:
+						farSafe6Auton();
+						break;
+
+						case 6:
 						skillsAuton();
 						break;
 					}

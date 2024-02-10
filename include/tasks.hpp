@@ -14,7 +14,7 @@ double modabs(double value, double mod) {
   return fmod(fmod(value, mod) + mod, mod);
 }
 
-std::vector<std::string> autons{"None", "Close Safe (1+2+Pole)", "Close (1+4+Pole)", "Close Elim", "Far Safe", "Skills"};
+std::vector<std::string> autons{"None", "Close Safe (1+2+Pole)", "Close (1+4+Pole)", "Close Elim", "Far Safe", "Far Safe 6", "Skills"};
 int curSelected = 0;
 void autonSelector() {
 	while (true) {
@@ -233,7 +233,7 @@ void odometryTask() {
 		localYPos = VChange;
 	} else { // imagines the movement as an arc
 		localXPos = (2*sin((heading-lastHeading)/2))*((HChange/(heading-lastHeading))-6.25); 
-		localYPos = (2*sin((heading-lastHeading)/2))*((VChange/(heading-lastHeading))+0.5);
+		localYPos = (2*sin((heading-lastHeading)/2))*((VChange/(heading-lastHeading))+2);
 	}
 
 	float localHeading;

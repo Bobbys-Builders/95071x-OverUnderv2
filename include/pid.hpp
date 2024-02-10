@@ -25,7 +25,7 @@ public:
   double lasterror = error;
   double out = 0;
 
-  double tolerance = 0;
+  double tolerance = 0.01;
 
   // Constructors
   Pid() {}

@@ -32,7 +32,7 @@ void updateButtons() {
     BMode = controller.get_digital(DIGITAL_B);
 
 	if (R1Mode || R2Mode || L1Mode || L2Mode || XMode || BMode || fabs(controller.get_analog(ANALOG_LEFT_Y)) > 20 || fabs(controller.get_analog(ANALOG_RIGHT_X)) > 20) {
-		drive.odomPiston.set_value(true);
+		// drive.odomPiston.set_value(true);
 	}
 }
 
@@ -116,8 +116,9 @@ void moveDrive() {
 
 	double turn = turn2;
 	double power = power1;
-	leftVelocity = (0.925 * power1 + 0.8 * turn2) * 600 / 127; 
-	rightVelocity = (0.925 * power1 - 0.8 * turn2) * 600 / 127; 
+
+	leftVelocity = (0.925 * power1 + 0.8 * turn2) * 600 / 127;
+	rightVelocity = (0.925 * power1 - 0.8 * turn2) * 600 / 127;
   
 	if (controller.get_digital(DIGITAL_X) && !XMode) holdDrive = !holdDrive;
 	if (holdDrive) drive.hold();

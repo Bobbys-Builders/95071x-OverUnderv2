@@ -27,8 +27,8 @@ const int FR_PORT = 14;
 const int MR_PORT = 12;
 const int BR_PORT = 15;
 
-const int VODOM_PORT = 9; // odom rotation sensor
-const int HODOM_PORT = 10;
+const int VODOM_PORT = 10; // odom rotation sensor
+const int HODOM_PORT = 9;
 
 const int INT_PORT = 20; // intake
 
@@ -62,7 +62,7 @@ Climb climb(EXP_PORT, CLMU_PORT, CLMD_PORT);
 Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
 
 // pid
-Pid movePID(0, 120, 0.001, 15, 20000, 600, 0);
-Pid turnPID(0, 2, 0.0001, 0.2, 5000, 600, 0); 
+Pid movePID(0, 27, 0.001, 10, 20000, 600, 0);
+Pid turnPID(0, 2.3, 0.0005, 0.4, 5000, 600, 0); 
 
 #endif
