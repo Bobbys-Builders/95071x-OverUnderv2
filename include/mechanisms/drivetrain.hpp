@@ -75,7 +75,7 @@ public:
     // control
     // moves the left motors using velocity
     void moveVelocityLeft(double velocity) {
-        velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
+        velocity = fmin(fmax(velocity, -300), 300); // limits velocity to max/min
 
         FLMotor.move_velocity(velocity);
         MLMotor.move_velocity(velocity);
@@ -84,7 +84,7 @@ public:
 
     // moves the right motors using velocity
     void moveVelocityRight(double velocity) {
-        velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
+        velocity = fmin(fmax(velocity, -300), 300); // limits velocity to max/min
 
         FRMotor.move_velocity(velocity);
         MRMotor.move_velocity(velocity);

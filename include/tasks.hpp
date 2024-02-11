@@ -3,8 +3,6 @@
 
 #include "main.h"
 #include "setup.hpp"
-#include "assets/img_field.c"
-LV_IMG_DECLARE(img_field);
 double sign(double input) {
 	if (input == 0) return 1;
 	return fabs(input) / input;
@@ -42,30 +40,6 @@ void autonSelector() {
 	pros::delay(500);
 }
 
-// returns target - current
-double headingError(double targetHeading) {
-  if (modabs(targetHeading - drive.imu.get_heading(), 360) < 180) return modabs(targetHeading - drive.imu.get_heading(), 360);
-  return modabs(targetHeading - drive.imu.get_heading(), 360) - 360;
-}
-
-double heading(double x, double y) {
-  if (x-xPos == 0 && y-yPos == 0) return drive.imu.get_heading();
-  if (x - xPos > 0) return 90 - atan((y - yPos) / (x - xPos)) / RADIANS_DEGREE;
-  else if (x - xPos < 0) return 270 - atan((y - yPos) / (x - xPos)) / RADIANS_DEGREE;
-  else if (y - yPos >= 0) return 0;
-  return 180;
-}
-
-// returns difference in heading from a point in imu degrees
-double headingError(double x, double y) {
-  return headingError(heading(x, y));
-}
-
-// returns the absolute distance to a point
-double positionError(double x, double y) {
-  return pow(pow(x - xPos, 2) + pow(y - yPos, 2), 0.5);
-}
-
 void getAverageTemperature() {
 	controller.print(0, 0, "DR %.0f IN %.0f KC %.0f                            ", drive.getAvgTemps(), intake.INTMotor.get_temperature(), kicker.getAvgTemp());
 }
@@ -94,7 +68,7 @@ void getMaxTemperature() {
 }
 
 void getIntakeSpeed() {
-	controller.print(2, 0, "INT: %.1f rpm                         ", intake.getRealVelocity());
+	controller.print(2, 0, "INT%.1f rpm                         ", intake.getRealVelocity());
 }
 
 // void getAuton() {
@@ -102,13 +76,13 @@ void getIntakeSpeed() {
 // }
 
 void getPosition() {
-  controller.print(2, 0, "X %.1f Y %.1f H %.1f                 ", xPos, yPos, drive.imu.get_heading());
+  controller.print(2, 0, "X%.1f Y%.1f H%.1f                 ", xPos, yPos, drive.imu.get_heading());
   // master.print(0, 0, "X %.1f H %.1f                 ", xPosition, (drivetrain.getLeftPosition() + drivetrain.getRightPosition()) / 2 / ticksPerInch);
 }
 
 void getKCKSpeed() {
 //   controller.print(1, 0, "KC Vel %0f, %.2f KPS                 ", kicker.getRealVelocity(), kicker.getRealVelocity() / 60);
-  controller.print(2, 0, "KC Vel %0f, %.2f KPS                 ", kicker.getPosition(), 0);
+  controller.print(2, 0, "KC V %0f, %.2fKPS                 ", kicker.getPosition(), 0);
 }
 
 void printTask() {
@@ -129,21 +103,6 @@ void printTask() {
 	}
 }
 
-void kickerTask() {
-	while (true) {
-		// if (modabs(kicker.getPosition()+7500, 36000)-7500 < 23000 && kicker.target == 0) {
-		// 	kicker.moveVelocity((25000-kicker.getPosition())/150);
-		// } else if (modabs(kicker.getPosition()+6000, 36000)-6000 > 26000 && kicker.target == 0) {
-		// 	kicker.KCKLMotor.move_voltage(0);
-		// 	kicker.KCKRMotor.move_voltage(0);
-		// } else if (kicker.target > 0) {
-			kicker.updateVelocity();
-			kicker.moveVelocity(kicker.velocity);
-		// }
-
-		pros::delay(10);
-	}
-}
 //CONSTANTS
 static int MAP_CENTER_X = 0;
 static int MAP_CENTER_Y = 0;
@@ -161,13 +120,6 @@ void initVisualizer(){
 lv_obj_set_size(bar1, MAP_CENTER_X*2, MAP_CENTER_Y*2);
 lv_obj_align(bar1, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 lv_bar_set_value(bar1, 0);
-
-
-lv_obj_t * img1 = lv_img_create(lv_scr_act(), NULL);
-lv_img_set_src(img1, &img_field);
-lv_obj_align(img1, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-
-
 
 static lv_style_t style_bar;
 lv_style_copy(&style_bar, &lv_style_pretty);
@@ -196,8 +148,6 @@ headingStyle.line.color = LV_COLOR_RED;
 headingStyle.line.width = 3;
 
 headingIndicator = lv_line_create(lv_scr_act(), NULL);
-lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-lv_line_set_style(headingIndicator,&headingStyle);
 
 }
 
@@ -215,45 +165,88 @@ lv_obj_align(arc, NULL, LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-CIRCLE_RADIUS, BOT_POS_Y
 //SETUP ARRAY FOR HEADING VISUALIZER
  lv_point_t line_points[] = { {BOT_POS_X,BOT_POS_Y},{BOT_POS_X+(CIRCLE_RADIUS-1)*cos(heading),BOT_POS_Y-(CIRCLE_RADIUS-1)*sin(heading)} };
 lv_line_set_points(headingIndicator, line_points, 2); 
+lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+lv_line_set_style(headingIndicator,&headingStyle);
 }
+
+void kickerTask() {
+	while (true) {
+		// if (modabs(kicker.getPosition()+7500, 36000)-7500 < 23000 && kicker.target == 0) {
+		// 	kicker.moveVelocity((25000-kicker.getPosition())/150);
+		// } else if (modabs(kicker.getPosition()+6000, 36000)-6000 > 26000 && kicker.target == 0) {
+		// 	kicker.KCKLMotor.move_voltage(0);
+		// 	kicker.KCKRMotor.move_voltage(0);
+		// } else if (kicker.target > 0) {
+			kicker.updateVelocity();
+			kicker.moveVelocity(kicker.velocity);
+		// }
+
+		pros::delay(10);
+	}
+}
+
+// returns target - current
+double headingError(double targetHeading) {
+  if (modabs(targetHeading - drive.imu.get_heading(), 360) < 180) return modabs(targetHeading - drive.imu.get_heading(), 360);
+  return modabs(targetHeading - drive.imu.get_heading(), 360) - 360;
+}
+
+double heading(double x, double y) {
+  if (x-xPos == 0 && y-yPos == 0) return drive.imu.get_heading();
+  if (x - xPos > 0) return 90 - atan((y - yPos) / (x - xPos)) / RADIANS_DEGREE;
+  else if (x - xPos < 0) return 270 - atan((y - yPos) / (x - xPos)) / RADIANS_DEGREE;
+  else if (y - yPos >= 0) return 0;
+  return 180;
+}
+
+// returns difference in heading from a point in imu degrees
+double headingError(double x, double y) {
+  return headingError(heading(x, y));
+}
+
+// returns the absolute distance to a point
+double positionError(double x, double y) {
+  return pow(pow(x - xPos, 2) + pow(y - yPos, 2), 0.5);
+}
+
 void odometryTask() {
 	lastHeading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	while (true) {
 
-	pros::delay(10);
+		pros::delay(10);
 
-	double heading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // new inputs
-	double VChange = drive.getPositionV()/360 * 2*M_PI;
-	double HChange = drive.getPositionH()/360 * 2*M_PI;
+		double heading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // new inputs
+		double VChange = drive.getPositionV()/360 * 2*M_PI;
+		double HChange = drive.getPositionH()/360 * 2*M_PI;
 
-	double localXPos;
-	double localYPos;
-	if (fabs(heading-lastHeading) <= 0.0001) { // if the change in heading is small enough, assume the robot traveled in a straight line
-		localXPos = HChange;
-		localYPos = VChange;
-	} else { // imagines the movement as an arc
-		localXPos = (2*sin((heading-lastHeading)/2))*((HChange/(heading-lastHeading))-6.25); 
-		localYPos = (2*sin((heading-lastHeading)/2))*((VChange/(heading-lastHeading))+2);
-	}
+		double localXPos;
+		double localYPos;
+		if (fabs(heading-lastHeading) <= 0.0001) { // if the change in heading is small enough, assume the robot traveled in a straight line
+			localXPos = HChange;
+			localYPos = VChange;
+		} else { // imagines the movement as an arc
+			localXPos = (2*sin((heading-lastHeading)/2))*((HChange/(heading-lastHeading))-6.25); 
+			localYPos = (2*sin((heading-lastHeading)/2))*((VChange/(heading-lastHeading))+2);
+		}
 
-	float localHeading;
-	float localLength;
+		float localHeading;
+		float localLength;
 
-	if (localXPos == 0 && localYPos == 0){
-		localHeading = 0;
-		localLength = 0;
-	} else {
-		localHeading = atan2(localYPos, localXPos); 
-		localLength = sqrt(pow(localXPos, 2) + pow(localYPos, 2)); 
-	}
+		if (localXPos == 0 && localYPos == 0){
+			localHeading = 0;
+			localLength = 0;
+		} else {
+			localHeading = atan2(localYPos, localXPos); 
+			localLength = sqrt(pow(localXPos, 2) + pow(localYPos, 2)); 
+		}
 
-	float global_polar_angle = localHeading - (heading + lastHeading)/2;
+		float global_polar_angle = localHeading - (heading + lastHeading)/2;
 
-	xPos+=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
-	yPos-=localLength*sin(global_polar_angle);
+		xPos+=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
+		yPos-=localLength*sin(global_polar_angle);
 
-	lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
- updateVisualizer(lastHeading);
+		lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
+	//	updateVisualizer(lastHeading);
 	}
 }
 
@@ -267,124 +260,6 @@ void botMove(double dist, double vel, bool brake = true, bool block = true) {
   
   if (block && brake) drive.stop();
 }
-
-// double maxMoveSpeed = 450;
-// double maxTurnSpeed = 350;
-// double moveConstant = 120;
-// double turnConstant = 35;
-// double maxTurnConstant = 35;
-// bool driveDisabled = true;
-// bool arcMovement = false;
-// int driveMode = 0; // 0-both, 1-forwards, 2-backwards
-// double targetX = 0;
-// double targetY = 0;
-// void setTargetPos(double x, double y) {
-//   targetX = x;
-//   targetY = y;
-//   pros::delay(30);
-//   turnConstant = maxTurnConstant;
-// }
-// void driveAutoTask() {
-//   double moveTarget = 0;
-//   double turnTarget = 0;
-//   double moveVelocity = 0;
-//   double turnVelocity = 0;
-//   double moveAccel = 15;
-//   double turnAccel = 15;
-//   bool lastDriveForward = true;
-//   bool lastTurnPositive = true;
-//   double lastHeading = drive.imu.get_heading();
-
-//   while (true) {
-//     if (!arcMovement && positionError(targetX, targetY) > 1.5) {
-//       if ((fabs(headingError(targetX, targetY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
-//         if (!lastDriveForward) {
-//           turnConstant = maxTurnConstant;
-//         }
-//         if (headingError(targetX, targetY) < -2) {
-//           if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-//           lastTurnPositive = false;
-//         } else if (headingError(targetX, targetY) > 2) {
-//           if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-//           lastTurnPositive = true;
-//         }
-//         if (fabs(headingError(targetX, targetY)) > 90) {
-//           turnConstant = maxTurnConstant;
-//         }
-//         turnTarget = sign(headingError(targetX, targetY)) * fmin(sqrt(fabs(headingError(targetX, targetY))) * turnConstant, maxTurnSpeed);
-
-//         lastDriveForward = true;
-//       } else {
-//         if (lastDriveForward) {
-//           turnConstant = maxTurnConstant;
-//         }
-//         if (headingError(heading(targetX, targetY) + 180) < -2) {
-//           if (lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-//           lastTurnPositive = false;
-//         } else if (headingError(heading(targetX, targetY) + 180) > 2) {
-//           if (!lastTurnPositive) turnConstant = fmax(6, turnConstant / 2);
-//           lastTurnPositive = true;
-//         }
-//         if (fabs(headingError(targetX, targetY)) > 90) {
-//           turnConstant = maxTurnConstant;
-//         }
-//         turnTarget = sign(headingError(heading(targetX, targetY) + 180)) * fmin(sqrt(fabs(headingError(heading(targetX, targetY) + 180))) * turnConstant, maxTurnSpeed);
-
-//         lastDriveForward = false;
-//       }
-
-//       moveTarget = fmin(sqrt(fabs(positionError(targetX, targetY))) * moveConstant, maxMoveSpeed) * cos(headingError(targetX, targetY) * RADIANS_DEGREE);
-//       moveAccel = 15;
-//       turnAccel = 15;
-//     } else if (arcMovement  && positionError(targetX, targetY) > 1.5) {
-//       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-//       moveTarget = fmin(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * moveConstant, maxMoveSpeed) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE));
-//       moveAccel = 30;
-//       turnAccel = 30;
-//     } else {
-//       moveTarget = 0;
-//       turnTarget = 0;
-//       moveAccel = 15;
-//       turnAccel = 15;
-//     }
-
-//     if (moveVelocity < moveTarget) {
-//       moveVelocity += fmin(12, moveTarget - moveVelocity);
-//     }
-//     if (moveVelocity > moveTarget) {
-//       moveVelocity -= fmin(12, moveVelocity - moveTarget);
-//     }
-//     if (turnVelocity < turnTarget) {
-//       turnVelocity += fmin(12, turnTarget - turnVelocity);
-//     }
-//     if (turnVelocity > turnTarget) {
-//       turnVelocity -= fmin(12, turnVelocity - turnTarget);
-//     }
-
-//     if (driveDisabled) {
-//       moveVelocity = 0;
-//       turnVelocity = 0;
-//     } else if (!arcMovement) {    
-//       double headingDerivative = headingError(lastHeading);
-//       drive.moveVelocityLeft(moveVelocity + turnVelocity + headingDerivative * 40);
-//       drive.moveVelocityRight(moveVelocity - turnVelocity - headingDerivative * 40);
-//     } else if (arcMovement) {
-//       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-//       drive.moveVelocityLeft(moveVelocity * (radius + 10 / 2)/radius);
-//       drive.moveVelocityRight(moveVelocity * (radius - 10 / 2)/radius);
-//     }
-//     lastHeading = drive.imu.get_heading();
-
-//     pros::delay(10);
-
-//     // controller.print(0, 0, "%.1f %.1f %.1f", xPos, yPos, drive.imu.get_heading());
-//     // std::cout << xPosition << " "
-//     //  << yPosition << " "
-//     //  << -headingError(0) << " "
-//     //  << moveVelocity << " " 
-//     //  << turnVelocity << std::endl;
-//   }
-// }
 
 double maxMoveSpeed = 550;
 double maxTurnSpeed = 350;
@@ -437,12 +312,40 @@ void driveAutoTask() {
   }
 }
 
+pros::Task kicker_task(kickerTask);
+pros::Task odom_task(odometryTask);
+pros::Task drive_auto_task(driveAutoTask);
+pros::Task print_task(printTask);
+
+void setPos(double x, double y, double heading = drive.imu.get_heading()) {
+  odom_task.suspend();
+  pros::delay(20);
+  xPos = x;
+  yPos = y;
+  drive.imu.set_heading(heading);
+  pros::delay(20);
+  drive.lastHOdom = drive.hOdom.get_position();
+  drive.lastVOdom = drive.vOdom.get_position();
+  lastHeading = (90-(drive.imu.get_heading()+90))*RADIANS_DEGREE;
+  odom_task.resume();
+}
+
+void untilKeyPress() {
+	drive_auto_task.suspend();
+	drive.stop();
+	while (!controller.get_digital_new_press(DIGITAL_A)) {
+		pros::delay(10);
+	}
+	drive_auto_task.resume();
+}
+
 void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double tX = targetX, double tY = targetY) {
   while (positionError(tX, tY) > tolerance && timeout > 0) {
     timeout -= 10;
     pros::delay(10);
   }
   pros::delay(extraTime);
+	untilKeyPress();
 }
 
 void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX = targetX, double tY = targetY) {
@@ -463,36 +366,18 @@ void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX
     }
   }
   pros::delay(extraTime);
+
+    untilKeyPress();
 }
 
-pros::Task kicker_task(kickerTask);
-pros::Task odom_task(odometryTask);
-pros::Task drive_auto_task(driveAutoTask);
-pros::Task print_task(printTask);
-
-void setPos(double x, double y) {
-  odom_task.suspend();
-  pros::delay(20);
-  xPos = x;
-  yPos = y;
-  pros::delay(20);
-  drive.lastHOdom = drive.hOdom.get_position();
-  drive.lastVOdom = drive.vOdom.get_position();
-  odom_task.resume();
-}
-
-// void suspendAutoTasks() {
-//   drive_auto_task.suspend();
-// }
-// void resumeAutoTasks() {
-//   drive_auto_task.resume();
-// }
-// void suspendTasks() {
-//   kicker_task.suspend();
+// void setPos(double x, double y) {
 //   odom_task.suspend();
-// }
-// void resumeTasks() {
-//   kicker_task.resume()
+//   pros::delay(20);
+//   xPos = x;
+//   yPos = y;
+//   pros::delay(20);
+//   drive.lastHOdom = drive.hOdom.get_position();
+//   drive.lastVOdom = drive.vOdom.get_position();
 //   odom_task.resume();
 // }
 
