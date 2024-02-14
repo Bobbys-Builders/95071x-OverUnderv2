@@ -266,22 +266,35 @@ double maxTurnSpeed = 350;
 bool driveDisabled = true;
 bool arcMovement = false;
 int driveMode = 0; // 0-both, 1-forwards, 2-backwards
+int chainMode = 0; // 0-regular chain, 1-turn chain
 double targetX = 0;
 double targetY = 0;
+double chainX = 0;
+double chainY = 0;
 void setTargetPos(double x, double y) {
   targetX = x;
   targetY = y;
+  chainX = x;
+  chainY = y;
+  movePID.resetID();
+  turnPID.resetID();
+  pros::delay(30);
+}
+void setChainPos(double x, double y) {
+  chainX = x;
+  chainY = y;
+  turnPID.resetID();
   pros::delay(30);
 }
 void driveAutoTask() {
   while (true) {
     if (!arcMovement && positionError(targetX, targetY) > 0.5) {
-      if ((fabs(headingError(targetX, targetY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
-        turnPID.update(headingError(targetX, targetY));
+      if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+        turnPID.update(headingError(chainX, chainY));
       } else {
-        turnPID.update(headingError(heading(targetX, targetY) + 180));
+        turnPID.update(headingError(heading(chainX, chainY) + 180));
       }
-      movePID.update(positionError(targetX, targetY) * cos(headingError(targetX, targetY) * RADIANS_DEGREE));
+      movePID.update(positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
     } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       movePID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
@@ -295,7 +308,7 @@ void driveAutoTask() {
     if (!driveDisabled && !arcMovement) {    
       drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
       drive.moveVelocityRight(movePID.calculateOut() - turnPID.calculateOut());
-    } else if (arcMovement) {
+    } else if (!driveDisabled && arcMovement) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       drive.moveVelocityLeft(movePID.calculateOut() * (radius + 10 / 2)/radius);
       drive.moveVelocityRight(movePID.calculateOut() * (radius - 10 / 2)/radius);
@@ -339,16 +352,16 @@ void untilKeyPress() {
 	drive_auto_task.resume();
 }
 
-void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double tX = targetX, double tY = targetY) {
+void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
   while (positionError(tX, tY) > tolerance && timeout > 0) {
     timeout -= 10;
     pros::delay(10);
   }
   pros::delay(extraTime);
-	untilKeyPress();
+	// untilKeyPress();
 }
 
-void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX = targetX, double tY = targetY) {
+void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
   if (driveMode == 0) {
     while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && timeout > 0) {
       timeout -= 10;
@@ -367,7 +380,7 @@ void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX
   }
   pros::delay(extraTime);
 
-    untilKeyPress();
+    // untilKeyPress();
 }
 
 // void setPos(double x, double y) {

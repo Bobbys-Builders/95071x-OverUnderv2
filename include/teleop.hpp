@@ -117,8 +117,8 @@ void moveDrive() {
 	double turn = turn2;
 	double power = power1;
 
-	leftVelocity = (0.925 * power1 + 0.8 * turn2) * 600 / 127;
-	rightVelocity = (0.925 * power1 - 0.8 * turn2) * 600 / 127;
+	leftVelocity = (0.925 * power1 + 1 * turn2) * 600 / 127;
+	rightVelocity = (0.925 * power1 - 1 * turn2) * 600 / 127;
   
 	if (controller.get_digital(DIGITAL_X) && !XMode) holdDrive = !holdDrive;
 	if (holdDrive) drive.hold();

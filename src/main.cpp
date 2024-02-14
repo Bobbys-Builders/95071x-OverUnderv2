@@ -22,7 +22,7 @@ void initialize() {
 	if (!controller.get_digital(DIGITAL_A)) {
 		controller.print(1, 7, "Reseting");
 		drive.imu.reset(true);
-		drive.imu.set_heading(180);
+		drive.imu.set_heading(0);
 		setPos(0, 0);
 	}
 	odom_task.resume();
