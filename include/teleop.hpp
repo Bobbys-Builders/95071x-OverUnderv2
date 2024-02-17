@@ -23,7 +23,7 @@ bool L1Mode = false;
 bool L2Mode = false;
 bool XMode = false;
 bool BMode = false;
-void updateButtons() {
+bool updateButtons() {
     R1Mode = controller.get_digital(DIGITAL_R1);
     R2Mode = controller.get_digital(DIGITAL_R2);
     L1Mode = controller.get_digital(DIGITAL_L1);
@@ -33,7 +33,9 @@ void updateButtons() {
 
 	if (R1Mode || R2Mode || L1Mode || L2Mode || XMode || BMode || fabs(controller.get_analog(ANALOG_LEFT_Y)) > 20 || fabs(controller.get_analog(ANALOG_RIGHT_X)) > 20) {
 		drive.odomPiston.set_value(true);
+		return true;
 	}
+	return false;
 }
 
 bool frontWingsDown = false;
@@ -176,8 +178,8 @@ void moveIntake() {
 int kickerMode = 0;
 void moveKicker() {
     if (controller.get_digital(DIGITAL_DOWN) && controller.get_digital(DIGITAL_R2) && !R2Mode) {
-		if (kickerMode == 1) kickerMode = 2;
-		else if (kickerMode == 2) kickerMode = 0;
+		if (kickerMode == 1) kickerMode = 0;
+		// else if (kickerMode == 2) kickerMode = 0;
 		else kickerMode = 1;
 	}
 
@@ -186,11 +188,11 @@ void moveKicker() {
 			kicker.target = 0;
 			break;
 		case 1:
-			kicker.target = 180;
+			kicker.target = 170;
 			break;
-		case 2:
-			kicker.target = 100;
-			break;
+		// case 2:
+		// 	kicker.target = 100;
+		// 	break;
 	}
 }
 

@@ -155,7 +155,7 @@ void opcontrol() {
 		updateButtons();
 
 		if (controller.get_digital(DIGITAL_UP)) { // for testing auton
-			if (controller.get_digital(DIGITAL_LEFT) && controller.get_digital(DIGITAL_RIGHT) && curSelected == 11) {
+			if (controller.get_digital(DIGITAL_LEFT) && controller.get_digital(DIGITAL_RIGHT) && curSelected == 6) {
 				drive_auto_task.resume();
 				drive.odomPiston.set_value(false);
 				skillsSegA();

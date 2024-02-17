@@ -24,7 +24,7 @@ const int FL_PORT = 17; // drive
 const int ML_PORT = 18;
 const int BL_PORT = 19;
 const int FR_PORT = 14;
-const int MR_PORT = 12;
+const int MR_PORT = 11;
 const int BR_PORT = 15;
 
 const int VODOM_PORT = 10; // odom rotation sensor

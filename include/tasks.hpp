@@ -294,7 +294,9 @@ void driveAutoTask() {
       } else {
         turnPID.update(headingError(heading(chainX, chainY) + 180));
       }
-      movePID.update(positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
+	  double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
+	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
+      movePID.update(out);
     } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       movePID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
@@ -344,12 +346,12 @@ void setPos(double x, double y, double heading = drive.imu.get_heading()) {
 }
 
 void untilKeyPress() {
-	drive_auto_task.suspend();
-	drive.stop();
-	while (!controller.get_digital_new_press(DIGITAL_A)) {
-		pros::delay(10);
-	}
-	drive_auto_task.resume();
+	// drive_auto_task.suspend();
+	// drive.stop();
+	// while (!controller.get_digital_new_press(DIGITAL_A)) {
+	// 	pros::delay(10);
+	// }
+	// drive_auto_task.resume();
 }
 
 void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
@@ -358,7 +360,7 @@ void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double 
     pros::delay(10);
   }
   pros::delay(extraTime);
-	// untilKeyPress();
+	untilKeyPress();
 }
 
 void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
@@ -380,7 +382,7 @@ void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX
   }
   pros::delay(extraTime);
 
-    // untilKeyPress();
+    untilKeyPress();
 }
 
 // void setPos(double x, double y) {
