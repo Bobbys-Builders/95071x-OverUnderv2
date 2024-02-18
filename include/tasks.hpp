@@ -341,8 +341,8 @@ void driveAutoTask() {
       turnPID.update(0);
     }
 
-    // movePID.maxLim = maxMoveSpeed;
-    movePID.maxLim = fmin(maxMoveSpeed, 450);
+    movePID.maxLim = maxMoveSpeed;
+    // movePID.maxLim = fmin(maxMoveSpeed, 450);
     turnPID.maxLim = maxTurnSpeed;
     if (!driveDisabled && !arcMovement) {    
       drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
@@ -365,7 +365,7 @@ void driveAutoTask() {
 }
 
 pros::Task kicker_task(kickerTask);
-pros::Task odom_task(driveOdometryTask);
+pros::Task odom_task(odometryTask);
 pros::Task drive_auto_task(driveAutoTask);
 pros::Task print_task(printTask);
 
