@@ -17,6 +17,8 @@
 int timer = 0;
 double xPos = 0;
 double yPos = 0;
+double driveXPos = 0;
+double driveYPos = 0;
 int selectedAuton;
 
 // ports

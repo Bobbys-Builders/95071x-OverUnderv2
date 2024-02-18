@@ -54,6 +54,14 @@ public:
         lastHOdom = hOdom.get_position();
         return pos / 100;
     }
+    
+    double getPositionLeft() {
+        return (FLMotor.get_position() + MLMotor.get_position() + BLMotor.get_position()) / 3;
+    }
+
+    double getPositionRight() {
+        return (FRMotor.get_position() + MRMotor.get_position() + BRMotor.get_position()) / 3;
+    }
 
     // int getVelocityLeft() {
     //     return (FLMotor.get_actual_velocity() + BLMotor.get_actual_velocity() + TLMotor.get_actual_velocity()) / 3;

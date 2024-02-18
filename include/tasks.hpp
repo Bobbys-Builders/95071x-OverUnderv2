@@ -151,8 +151,6 @@ headingIndicator = lv_line_create(lv_scr_act(), NULL);
 
 }
 
-// keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
-double lastHeading;
 void updateVisualizer(double heading){
   
  //UPDATE ROBOT POSITION VISUALIZATION
@@ -209,6 +207,8 @@ double positionError(double x, double y) {
   return pow(pow(x - xPos, 2) + pow(y - yPos, 2), 0.5);
 }
 
+// keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
+double lastHeading;
 void odometryTask() {
 	lastHeading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	while (true) {
@@ -248,6 +248,42 @@ void odometryTask() {
 		lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	//	updateVisualizer(lastHeading);
 	}
+}
+
+// keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
+double lastLPosition = 0;
+double lastRPosition = 0;
+double lastH = 0;
+void driveOdometryTask() {
+
+  lastLPosition = drive.getPositionLeft(); // keeping track of the previous positions because resetting encoders is hard to coordinate with multiple threads
+  lastRPosition = drive.getPositionRight();
+  lastH = (90-drive.imu.get_heading()) * RADIANS_DEGREE; // all angles are in radians, with 0 degrees being the wall closest to the drive team
+  while (true) {
+
+    pros::delay(10);
+
+    double heading = (90-drive.imu.get_heading()) * RADIANS_DEGREE; // new inputs
+    double LChange = drive.getPositionLeft() - lastLPosition;
+    double RChange = drive.getPositionRight() - lastRPosition;
+    if ((RChange == 0 && LChange == 0) || (RChange / LChange > 0.995 && RChange / LChange < 1.005) || fabs(lastH - heading) <= 0.005) { // if the change in left and right is close enough, assume the robot traveled in a straight line
+      xPos += (LChange + RChange) / 2 * cos((heading + lastH) / 2) / TICKS_INCH;
+      yPos += (LChange + RChange) / 2 * sin((heading + lastH) / 2) / TICKS_INCH;
+    } else { // imagines the movement as an arc
+      double radius = ((LChange + RChange) / (LChange - RChange) * 10 / 2 * TICKS_INCH
+       + LChange / (lastH - heading)
+       + RChange / (lastH - heading))/3;
+      double relativeX = radius * sin(lastH - heading);
+      double relativeY = radius * (1 - cos(lastH - heading)); // calculates the change in x if the last position was (0, 0) and the last heading was 0 degrees
+
+      xPos += (relativeX * cos(lastH) + relativeY * cos(lastH - M_PI / 2)) / TICKS_INCH; // adds the relative changes to the actual positions
+      yPos += (relativeX * sin(lastH) + relativeY * sin(lastH - M_PI / 2)) / TICKS_INCH;
+    }
+
+    lastLPosition += LChange; // keeping track of the previous positions because resetting encoders is hard to coordinate with multiple threads
+    lastRPosition += RChange;
+    lastH = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
+  }
 }
 
 void botMove(double dist, double vel, bool brake = true, bool block = true) {
@@ -305,7 +341,8 @@ void driveAutoTask() {
       turnPID.update(0);
     }
 
-    movePID.maxLim = maxMoveSpeed;
+    // movePID.maxLim = maxMoveSpeed;
+    movePID.maxLim = fmin(maxMoveSpeed, 450);
     turnPID.maxLim = maxTurnSpeed;
     if (!driveDisabled && !arcMovement) {    
       drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
@@ -328,7 +365,7 @@ void driveAutoTask() {
 }
 
 pros::Task kicker_task(kickerTask);
-pros::Task odom_task(odometryTask);
+pros::Task odom_task(driveOdometryTask);
 pros::Task drive_auto_task(driveAutoTask);
 pros::Task print_task(printTask);
 
