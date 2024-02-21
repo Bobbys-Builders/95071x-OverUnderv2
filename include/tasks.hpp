@@ -216,12 +216,12 @@ void odometryTask() {
 		pros::delay(10);
 
 		double heading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // new inputs
-		double VChange = drive.getPositionV()/360 * 2*M_PI;
-		double HChange = drive.getPositionH()/360 * 2*M_PI;
+		double VChange = drive.getPositionV()/360 * 2.75*M_PI;
+		double HChange = drive.getPositionH()/360 * 2.75*M_PI;
 
 		double localXPos;
 		double localYPos;
-		if (fabs(heading-lastHeading) <= 0.0001) { // if the change in heading is small enough, assume the robot traveled in a straight line
+		if (fabs(heading-lastHeading) <= 0.0000001) { // if the change in heading is small enough, assume the robot traveled in a straight line
 			localXPos = HChange;
 			localYPos = VChange;
 		} else { // imagines the movement as an arc
@@ -286,17 +286,6 @@ void driveOdometryTask() {
   }
 }
 
-void botMove(double dist, double vel, bool brake = true, bool block = true) {
-  drive.hold();
-  drive.moveRelativeLeft(TICKS_INCH * dist, vel);
-  drive.moveRelativeRight(TICKS_INCH * dist, vel);
-
-  if (block) pros::delay(fabs(dist) * TICKS_INCH / vel / 300 * 60 * 1000 + 80);
-  // if (block) delay(fabs(dist) * ticksPerInch / vel / driveTicksPerRev * 60 * 1000);
-  
-  if (block && brake) drive.stop();
-}
-
 double maxMoveSpeed = 550;
 double maxTurnSpeed = 350;
 bool driveDisabled = true;
@@ -344,7 +333,7 @@ void driveAutoTask() {
     movePID.maxLim = maxMoveSpeed;
     // movePID.maxLim = fmin(maxMoveSpeed, 450);
     turnPID.maxLim = maxTurnSpeed;
-    if (!driveDisabled && !arcMovement) {    
+    if (!driveDisabled && !arcMovement) {
       drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
       drive.moveVelocityRight(movePID.calculateOut() - turnPID.calculateOut());
     } else if (!driveDisabled && arcMovement) {
@@ -391,16 +380,20 @@ void untilKeyPress() {
 	// drive_auto_task.resume();
 }
 
-void untilTargetPos(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
+bool untilTargetPos(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+  if (timeout <= 0) timeout = 9999999;
   while (positionError(tX, tY) > tolerance && timeout > 0) {
     timeout -= 10;
     pros::delay(10);
   }
   pros::delay(extraTime);
 	untilKeyPress();
+  if (timeout > 0) return true;
+  return false;
 }
 
-void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX = chainX, double tY = chainY) {
+bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+  if (timeout <= 0) timeout = 9999999;
   if (driveMode == 0) {
     while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && timeout > 0) {
       timeout -= 10;
@@ -418,8 +411,159 @@ void untilTargetH(double tolerance, int timeout, double extraTime = 0, double tX
     }
   }
   pros::delay(extraTime);
+  untilKeyPress();
+  if (timeout > 0) return true;
+  return false;
+}
 
-    untilKeyPress();
+bool move(double target, Pid mPID = movePID, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 0.5) {
+  driveDisabled = true;
+
+  target += (double)drive.vOdom.get_position()*2.75*M_PI/36000;
+  double initialT = drive.imu.get_heading();
+
+  mPID.resetID();
+  tPID.resetID();
+  mPID.maxLim = 300;
+  tPID.maxLim = maxTurnSpeed;
+  if (timeout <= 0) timeout = 9999999;
+  while (fabs(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000) > tolerance && timeout > 0) {
+    mPID.update(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
+    tPID.update(headingError(initialT));
+    drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
+    drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
+    pros::delay(10);
+  }
+  while (extraTime > 0) {
+    mPID.update(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
+    tPID.update(headingError(initialT));
+    drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
+    drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
+    pros::delay(10);
+    extraTime -= 10;
+  }
+  drive.stop();
+	untilKeyPress();
+  driveDisabled = false;
+  if (timeout > 0) return true;
+  return false;
+}
+
+bool turn(double target, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
+  driveDisabled = true;
+
+  tPID.resetID();
+  tPID.maxLim = maxTurnSpeed;
+  if (timeout <= 0) timeout = 9999999;
+  while (fabs(headingError(target)) > tolerance && timeout > 0) {
+    tPID.update(headingError(target));
+    drive.moveVelocityLeft(tPID.calculateOut());
+    drive.moveVelocityRight(-tPID.calculateOut());
+    pros::delay(10);
+  }
+  while (extraTime > 0) {
+    tPID.update(headingError(target));
+    drive.moveVelocityLeft(tPID.calculateOut());
+    drive.moveVelocityRight(-tPID.calculateOut());
+    pros::delay(10);
+    extraTime -= 10;
+  }
+  drive.stop();
+	untilKeyPress();
+  driveDisabled = false;
+  if (timeout > 0) return true;
+  return false;
+}
+
+bool swerve(double tX, double tY, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
+  driveDisabled = true;
+
+  tPID.resetID();
+  tPID.maxLim = maxTurnSpeed;
+  if (timeout <= 0) timeout = 9999999;
+  while (fabs(headingError(tX, tY)) > tolerance && timeout > 0) {
+    double mOut = 0;
+    if ((fabs(headingError(tX, tY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+      tPID.update(headingError(tX, tY));
+      mOut = fabs(tPID.calculateOut());
+    } else {
+      tPID.update(headingError(heading(tX, tY) + 180));
+      mOut = -fabs(tPID.calculateOut());
+    }
+    drive.moveVelocityLeft(mOut + tPID.calculateOut());
+    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    pros::delay(10);
+  }
+  while (extraTime > 0) {
+    double mOut = 0;
+    if ((fabs(headingError(tX, tY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+      tPID.update(headingError(tX, tY));
+      mOut = fabs(tPID.calculateOut());
+    } else {
+      tPID.update(headingError(heading(tX, tY) + 180));
+      mOut = -fabs(tPID.calculateOut());
+    }
+    drive.moveVelocityLeft(mOut + tPID.calculateOut());
+    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    pros::delay(10);
+    extraTime -= 10;
+  }
+  drive.stop();
+	untilKeyPress();
+  driveDisabled = false;
+  if (timeout > 0) return true;
+  return false;
+}
+
+bool swerve(double target, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
+  driveDisabled = true;
+
+  tPID.resetID();
+  tPID.maxLim = maxTurnSpeed;
+  if (timeout <= 0) timeout = 9999999;
+  while (fabs(headingError(target)) > tolerance && timeout > 0) {
+    double mOut = 0;
+    if ((fabs(headingError(target)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+      tPID.update(headingError(target));
+      mOut = fabs(tPID.calculateOut());
+    } else {
+      tPID.update(headingError(target));
+      mOut = -fabs(tPID.calculateOut());
+    }
+    drive.moveVelocityLeft(mOut + tPID.calculateOut());
+    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    pros::delay(10);
+  }
+  while (extraTime > 0) {
+    double mOut = 0;
+    if ((fabs(headingError(target)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+      tPID.update(headingError(target));
+      mOut = fabs(tPID.calculateOut());
+    } else {
+      tPID.update(headingError(target));
+      mOut = -fabs(tPID.calculateOut());
+    }
+    drive.moveVelocityLeft(mOut + tPID.calculateOut());
+    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    pros::delay(10);
+    extraTime -= 10;
+  }
+  drive.stop();
+	untilKeyPress();
+  driveDisabled = false;
+  if (timeout > 0) return true;
+  return false;
+}
+
+void botMove(double dist, double vel, bool brake = true, bool block = true) {
+  driveDisabled = true;
+  drive.moveRelativeLeft(TICKS_INCH * dist, vel);
+  drive.moveRelativeRight(TICKS_INCH * dist, vel);
+
+  if (block) pros::delay(fabs(dist) * TICKS_INCH / vel / 300 * 60 * 1000 + 80);
+  
+  if (block && brake) drive.stop();
+  driveDisabled = false;
 }
 
 // void setPos(double x, double y) {

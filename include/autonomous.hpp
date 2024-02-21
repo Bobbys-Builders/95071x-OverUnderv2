@@ -6,27 +6,43 @@
 #include "teleop.hpp"
 
 void testAuton() {
+    double start = pros::millis();
+    driveDisabled = false;
+    drive.stop();
     drive.hold();
-    drive.imu.set_heading(180);
+    drive.imu.set_heading(0);
     setPos(0, 0);
     arcMovement = false;
     driveDisabled = false;
     driveMode = 1;
 
-    maxMoveSpeed = 0;
-    setTargetPos(xPos-24, yPos+48);
-    driveMode = 1;
-    untilTargetH(90, 2000);
-    // pros::delay(1000);
-    // untilTargetPos(1, 5000);
-    // maxMoveSpeed = 0;
-    print_task.suspend();
-    pros::delay(2500);
-    controller.print(0, 0, "%.0f                             ", (positionError(targetX, targetY)));
-    pros::delay(2500);
-    print_task.resume();
+    move(6, movePID, turnPID, 0, 250);
+    // swerve(90, turnPID, 0, 250);
+    // swerve(180, turnPID, 0, 250);
+    // driveMode = 2;
+    // swerve(90, turnPID, 0, 250);
+    // driveMode = 1;
+    // turn(0, turnPID, 0, 250);
+    // move(24, movePID, turnPID, 0, 250);
+    // driveMode = 2;
+    // swerve(90, turnPID, 0, 250);
+    // driveMode = 1;
+    // swerve(180, turnPID, 0, 250);
+    // driveMode = 0;
+    // swerve(0.0, 0.0, turnPID, 0, 250);
+    // move(positionError(0, 0), movePID, turnPID, 0, 250);
+    // turn(0, turnPID, 0, 250);
     driveDisabled = true;
+    driveMode = 0;
+    maxMoveSpeed = 450;
+    print_task.suspend(); 
     drive.stop();
+    pros::delay(500);
+    controller.print(0, 0, "%.0f                             ", (pros::millis() - start));
+    pros::delay(500);
+    controller.print(1, 0, "X: %.1f Y: %.1f H: %.1f          ", xPos, yPos, drive.imu.get_heading());
+    pros::delay(4000);
+    print_task.resume();
 }
 
 void noAuton() {}
@@ -61,11 +77,11 @@ void closeSafeAuton() {
     driveDisabled = false;
     driveMode = 1; // line up to touch pole
     // wings.extFrontWings();
-    setTargetPos(5*24+12, 1*24+12);
+    setTargetPos(5*24+14, 1*24+12);
     maxMoveSpeed = 200;
     untilTargetPos(10, 2000);
 
-    setTargetPos(5*24+8, 3*24-11); // turn towards pole
+    setTargetPos(5*24+14, 3*24-11); // turn towards pole
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, 500);
 
@@ -132,22 +148,32 @@ void closeAuton() {
     driveDisabled = false;
     driveMode = 1;
 
-    setTargetPos(3*24+8, 2*24-4); // intake middle triball
-    setChainPos(4*24-8, 2*24-6);
+    setTargetPos(3*24+8, 2*24-2); // intake middle triball
+    setChainPos(4*24-8, 2*24-4);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, 250);
     intake.moveVelocity(200); 
     wings.retBackWings();
-    maxMoveSpeed = 600;
-    untilTargetPos(15, 2000);
-    setChainPos(3*24+8, 2*24-4);
     maxMoveSpeed = 450;
-    untilTargetPos(5, 2000);
+    untilTargetPos(15, 2000);
+    setChainPos(3*24+8, 2*24-2);
+    // maxMoveSpeed = 450;
+    // pros::delay(750);
+    maxMoveSpeed = 300;
+    untilTargetPos(7, 2000);
 
     driveDisabled = true;
     maxMoveSpeed = 0;
     pros::delay(20);
     drive.stop();
+    driveDisabled = false;
+
+    driveMode = 2; // move back
+    setTargetPos(5*24+5, 1*24+2);
+    maxMoveSpeed = 0;
+    untilTargetH(10, 2000);
+
+    driveDisabled = true;
     pros::delay(500);
     botMove(-10, 450);
     intake.moveVelocity(200);
@@ -187,11 +213,6 @@ void closeAuton() {
     // botMove(-10, 450);
     // intake.moveVelocity(150);
     // driveDisabled = false;
-
-    driveMode = 2; // move back
-    setTargetPos(5*24+5, 1*24+2);
-    maxMoveSpeed = 0;
-    untilTargetH(10, 2000);
 
     maxMoveSpeed = 300;
     untilTargetPos(10, 2000);
@@ -531,7 +552,7 @@ void farSafe6Auton() {
     untilTargetPos(15, 2000);
     setChainPos(5*24-4, 5*24+8);
     maxMoveSpeed = 300;
-    untilTargetPos(5, 2000);
+    untilTargetPos(5, 1000);
     // wings.retBLWing();
     wings.retBackWings();
 
@@ -592,7 +613,7 @@ void farSafe6Auton() {
     driveDisabled = false;
     
     intake.moveVelocity(200); // intake triball 4
-    setTargetPos(3*24+6, 3*24+8);
+    setTargetPos(3*24+5, 3*24+9);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, 250);
     maxMoveSpeed = 300;
@@ -699,9 +720,9 @@ void skillsAuton() {
     int t = 0;
     // while(t < 21000) {
     while(t < 20000) {
-        kicker.target = 170;
-        kicker.velocity = 170;
-        kicker.moveVelocity(170);
+        kicker.target = 150;
+        kicker.velocity = 150;
+        kicker.moveVelocity(150);
         intake.moveVelocity(-200);
 
         pros::delay(10);
@@ -740,30 +761,30 @@ void skillsAuton() {
     drive.moveVelocityLeft(600);
     drive.moveVelocityRight(600);
     pros::delay(1000);
-    botMove(-5, 450);
+    botMove(-15, 450);
     wings.retFrontWings();
 
     driveDisabled = false;
-    driveMode = 2;
-    setTargetPos(5*24+12, 5*24-8);
-    maxMoveSpeed = 0;
-    untilTargetH(5, 2000, 250);
-    maxMoveSpeed = 450;
-    untilTargetPos(5, 2000);
-    driveMode = 1;
-    setTargetPos(4*24, 5*24+12);
-    maxMoveSpeed = 0;
-    untilTargetH(5, 2000, 250);
+    // driveMode = 2;
+    // setTargetPos(5*24+12, 5*24-8);
+    // maxMoveSpeed = 0;
+    // untilTargetH(5, 2000, 250);
+    // maxMoveSpeed = 450;
+    // untilTargetPos(5, 2000);
+    // driveMode = 1;
+    // setTargetPos(4*24, 5*24+12);
+    // maxMoveSpeed = 0;
+    // untilTargetH(5, 2000, 250);
 
-    driveDisabled = true;
-    drive.moveVelocityLeft(600);
-    drive.moveVelocityRight(600);
-    pros::delay(1000);
-    // setPos(3*24+30, yPos);
-    // pros::delay(1500);
-    // flaps.retractLeftFlap();
-    botMove(-15, 450);
-    driveDisabled = false;
+    // driveDisabled = true;
+    // drive.moveVelocityLeft(600);
+    // drive.moveVelocityRight(600);
+    // pros::delay(1000);
+    // // setPos(3*24+30, yPos);
+    // // pros::delay(1500);
+    // // flaps.retractLeftFlap();
+    // botMove(-15, 450);
+    // driveDisabled = false;
 
     driveMode = 1; // herd triballs
     arcMovement = false;
@@ -903,7 +924,7 @@ void skillsAuton() {
 
 
     driveMode = 1;
-    setTargetPos(12, 5*24-16);
+    setTargetPos(12, 5*24-8);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
     // flaps.extendFlaps();
