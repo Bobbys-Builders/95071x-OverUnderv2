@@ -245,6 +245,9 @@ void odometryTask() {
 		xPos+=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
 		yPos-=localLength*sin(global_polar_angle);
 
+
+    // if (fabs(heading-lastHeading) > 10*RADIANS_DEGREE || sqrt(localLength*sin(global_polar_angle) + localLength*cos(global_polar_angle))) controller.rumble("----------");
+
 		lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	//	updateVisualizer(lastHeading);
 	}
@@ -330,8 +333,8 @@ void driveAutoTask() {
       turnPID.update(0);
     }
 
-    movePID.maxLim = maxMoveSpeed;
-    // movePID.maxLim = fmin(maxMoveSpeed, 450);
+    // movePID.maxLim = maxMoveSpeed;
+    movePID.maxLim = fmin(maxMoveSpeed, 450);
     turnPID.maxLim = maxTurnSpeed;
     if (!driveDisabled && !arcMovement) {
       drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
@@ -418,34 +421,39 @@ bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, doubl
 
 bool move(double target, Pid mPID = movePID, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 0.5) {
   driveDisabled = true;
+  print_task.suspend();
 
   target += (double)drive.vOdom.get_position()*2.75*M_PI/36000;
   double initialT = drive.imu.get_heading();
 
   mPID.resetID();
   tPID.resetID();
-  mPID.maxLim = 300;
+  mPID.maxLim = maxMoveSpeed;
   tPID.maxLim = maxTurnSpeed;
   if (timeout <= 0) timeout = 9999999;
   while (fabs(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000) > tolerance && timeout > 0) {
     mPID.update(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
     tPID.update(headingError(initialT));
-    drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
-    drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
+    // drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
+    // drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
     pros::delay(10);
+    timeout -= 10;
+    controller.print(0, 0, "T%.1f C%.1f E%.1f                 ", target, (double)drive.vOdom.get_position()*2.75*M_PI/36000, target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
   }
   while (extraTime > 0) {
     mPID.update(target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
     tPID.update(headingError(initialT));
-    drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
-    drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
+    // drive.moveVelocityLeft(mPID.calculateOut() + tPID.calculateOut());
+    // drive.moveVelocityRight(mPID.calculateOut() - tPID.calculateOut());
     pros::delay(10);
     extraTime -= 10;
+    controller.print(0, 0, "T%.1f C%.1f E%.1f                 ", target, (double)drive.vOdom.get_position()*2.75*M_PI/36000, target-(double)drive.vOdom.get_position()*2.75*M_PI/36000);
   }
   drive.stop();
 	untilKeyPress();
   driveDisabled = false;
   if (timeout > 0) return true;
+  print_task.resume();
   return false;
 }
 
@@ -460,6 +468,7 @@ bool turn(double target, Pid tPID = turnPID, int timeout = 0, double extraTime =
     drive.moveVelocityLeft(tPID.calculateOut());
     drive.moveVelocityRight(-tPID.calculateOut());
     pros::delay(10);
+    timeout -= 10;
   }
   while (extraTime > 0) {
     tPID.update(headingError(target));
@@ -481,7 +490,7 @@ bool swerve(double tX, double tY, Pid tPID = turnPID, int timeout = 0, double ex
   tPID.resetID();
   tPID.maxLim = maxTurnSpeed;
   if (timeout <= 0) timeout = 9999999;
-  while (fabs(headingError(tX, tY)) > tolerance && timeout > 0) {
+  while ((fabs(headingError(tX, tY)) > tolerance && fabs(headingError(heading(tX, tY) + 180)) > tolerance) && timeout > 0) {
     double mOut = 0;
     if ((fabs(headingError(tX, tY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
       tPID.update(headingError(tX, tY));
@@ -493,6 +502,7 @@ bool swerve(double tX, double tY, Pid tPID = turnPID, int timeout = 0, double ex
     drive.moveVelocityLeft(mOut + tPID.calculateOut());
     drive.moveVelocityRight(mOut - tPID.calculateOut());
     pros::delay(10);
+    timeout -= 10;
   }
   while (extraTime > 0) {
     double mOut = 0;
@@ -521,7 +531,7 @@ bool swerve(double target, Pid tPID = turnPID, int timeout = 0, double extraTime
   tPID.resetID();
   tPID.maxLim = maxTurnSpeed;
   if (timeout <= 0) timeout = 9999999;
-  while (fabs(headingError(target)) > tolerance && timeout > 0) {
+  while ((fabs(headingError(target)) > tolerance && fabs(headingError(target + 180)) > tolerance) && timeout > 0) {
     double mOut = 0;
     if ((fabs(headingError(target)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
       tPID.update(headingError(target));
@@ -533,6 +543,7 @@ bool swerve(double target, Pid tPID = turnPID, int timeout = 0, double extraTime
     drive.moveVelocityLeft(mOut + tPID.calculateOut());
     drive.moveVelocityRight(mOut - tPID.calculateOut());
     pros::delay(10);
+    timeout -= 10;
   }
   while (extraTime > 0) {
     double mOut = 0;
