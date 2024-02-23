@@ -100,6 +100,7 @@ void printTask() {
 		
 		pros::delay(300);
 		printNum = (printNum + 1) % 3;
+    std::cout << "X: " << xPos << ", Y: " << yPos << ", H: " << drive.imu.get_heading() << std::endl;
 	}
 }
 
@@ -383,42 +384,6 @@ void untilKeyPress() {
 	// drive_auto_task.resume();
 }
 
-bool untilTargetPos(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
-  if (timeout <= 0) timeout = 9999999;
-  while (positionError(tX, tY) > tolerance && timeout > 0) {
-    timeout -= 10;
-    pros::delay(10);
-  }
-  pros::delay(extraTime);
-	untilKeyPress();
-  if (timeout > 0) return true;
-  return false;
-}
-
-bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
-  if (timeout <= 0) timeout = 9999999;
-  if (driveMode == 0) {
-    while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && timeout > 0) {
-      timeout -= 10;
-      pros::delay(10);
-    }
-  } else if (driveMode == 1) {
-    while (fabs(headingError(tX, tY)) > tolerance && timeout > 0) {
-      timeout -= 10;
-      pros::delay(10);
-    }
-  } else if (driveMode == 2) {
-    while (fabs(headingError(heading(tX, tY) + 180)) > tolerance && timeout > 0) {
-      timeout -= 10;
-      pros::delay(10);
-    }
-  }
-  pros::delay(extraTime);
-  untilKeyPress();
-  if (timeout > 0) return true;
-  return false;
-}
-
 bool move(double target, Pid mPID = movePID, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 0.5) {
   driveDisabled = true;
   print_task.suspend();
@@ -575,6 +540,43 @@ void botMove(double dist, double vel, bool brake = true, bool block = true) {
   
   if (block && brake) drive.stop();
   driveDisabled = false;
+}
+
+bool untilTargetPos(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+  if (timeout <= 0) timeout = 9999999;
+  while (positionError(tX, tY) > tolerance && timeout > 0) {
+    timeout -= 10;
+    pros::delay(10);
+  }
+  pros::delay(extraTime);
+	untilKeyPress();
+  if (timeout > 0) return true;
+  // botMove((driveMode*2-3)*5, 300);
+  return false;
+}
+
+bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+  if (timeout <= 0) timeout = 9999999;
+  if (driveMode == 0) {
+    while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && timeout > 0) {
+      timeout -= 10;
+      pros::delay(10);
+    }
+  } else if (driveMode == 1) {
+    while (fabs(headingError(tX, tY)) > tolerance && timeout > 0) {
+      timeout -= 10;
+      pros::delay(10);
+    }
+  } else if (driveMode == 2) {
+    while (fabs(headingError(heading(tX, tY) + 180)) > tolerance && timeout > 0) {
+      timeout -= 10;
+      pros::delay(10);
+    }
+  }
+  pros::delay(extraTime);
+  untilKeyPress();
+  if (timeout > 0) return true;
+  return false;
 }
 
 // void setPos(double x, double y) {
