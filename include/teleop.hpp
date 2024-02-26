@@ -44,6 +44,8 @@ void moveWings() {
 	if (controller.get_digital(DIGITAL_L1) && !L1Mode) {
 		frontWingsDown = !frontWingsDown;
 		if (frontWingsDown) {
+			wings.retBackWings();
+			backWingsDown = false;
 			wings.extFrontWings();
 		} else {
 			wings.retFrontWings();
@@ -52,6 +54,8 @@ void moveWings() {
 	if (controller.get_digital(DIGITAL_L2) && !L2Mode) {
 		backWingsDown = !backWingsDown;
 		if (backWingsDown) {
+			wings.retFrontWings();
+			frontWingsDown = false;
 			wings.extBackWings();
 		} else {
 			wings.retBackWings();
@@ -119,8 +123,8 @@ void moveDrive() {
 	double turn = turn2;
 	double power = power1;
 
-	leftVelocity = (0.925 * power1 + 1 * turn2) * 600 / 127;
-	rightVelocity = (0.925 * power1 - 1 * turn2) * 600 / 127;
+	leftVelocity = (0.925 * power1 + 0.95 * turn2) * 600 / 127;
+	rightVelocity = (0.925 * power1 - 0.95 * turn2) * 600 / 127;
   
 	if (controller.get_digital(DIGITAL_X) && !XMode) holdDrive = !holdDrive;
 	if (holdDrive) drive.hold();

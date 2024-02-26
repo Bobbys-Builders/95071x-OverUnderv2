@@ -120,6 +120,10 @@ void autonomous() {
 		break;
 
 		case 6:
+		farElim6Auton();
+		break;
+
+		case 7:
 		skillsAuton();
 		break;
 	}
@@ -155,7 +159,7 @@ void opcontrol() {
 		updateButtons();
 
 		if (controller.get_digital(DIGITAL_UP)) { // for testing auton
-			if (controller.get_digital(DIGITAL_LEFT) && controller.get_digital(DIGITAL_RIGHT) && curSelected == 6) {
+			if (controller.get_digital(DIGITAL_LEFT) && controller.get_digital(DIGITAL_RIGHT) && curSelected == 7) {
 				drive_auto_task.resume();
 				drive.odomPiston.set_value(false);
 				skillsSegA();
@@ -196,6 +200,10 @@ void opcontrol() {
 						break;
 
 						case 6:
+						farElim6Auton();
+						break;
+
+						case 7:
 						skillsAuton();
 						break;
 					}

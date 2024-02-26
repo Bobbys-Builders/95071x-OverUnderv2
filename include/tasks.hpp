@@ -12,7 +12,7 @@ double modabs(double value, double mod) {
   return fmod(fmod(value, mod) + mod, mod);
 }
 
-std::vector<std::string> autons{"None", "Close Safe (1+2+Pole)", "Close (1+4+Pole)", "Close Elim", "Far Safe", "Far Safe 6", "Skills"};
+std::vector<std::string> autons{"None", "Close Safe (1+2+Pole)", "Close (1+4+Pole)", "Close Elim", "Far Safe", "Far Safe 6", "Far Elim 6", "Skills"};
 int curSelected = 0;
 void autonSelector() {
 	while (true) {
@@ -100,7 +100,7 @@ void printTask() {
 		
 		pros::delay(300);
 		printNum = (printNum + 1) % 3;
-    std::cout << "X: " << xPos << ", Y: " << yPos << ", H: " << drive.imu.get_heading() << std::endl;
+    // std::cout << "X: " << xPos << ", Y: " << yPos << ", H: " << drive.imu.get_heading() << std::endl;
 	}
 }
 
