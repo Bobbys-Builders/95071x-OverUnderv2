@@ -65,6 +65,7 @@ Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
 
 // pid
 Pid movePID(0, 27, 0.001, 10, 20000, 600, 0);
-Pid turnPID(0, 2.3, 0.0005, 0.4, 5000, 600, 0); 
+Pid turnPID(0, 2, 0.002, 0.5, 10000, 600, 0);
+Pid swervePID(0, 2, 0.002, 0.5, 10000, 600, 0);
 
 #endif

@@ -210,6 +210,8 @@ double positionError(double x, double y) {
 
 // keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
 double lastHeading;
+double deltaX = 0;
+double deltaY = 0;
 void odometryTask() {
 	lastHeading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	while (true) {
@@ -243,8 +245,12 @@ void odometryTask() {
 
 		float global_polar_angle = localHeading - (heading + lastHeading)/2;
 
-		xPos+=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
-		yPos-=localLength*sin(global_polar_angle);
+		// xPos+=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
+		// yPos-=localLength*sin(global_polar_angle);
+		xPos+=fmax(-1, fmin(1, localLength*cos(global_polar_angle))); // adds the relative changes to the actual positions
+		yPos-=fmax(-1, fmin(1, localLength*sin(global_polar_angle)));
+		deltaX=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
+		deltaY=-localLength*sin(global_polar_angle);
 
 
     // if (fabs(heading-lastHeading) > 10*RADIANS_DEGREE || sqrt(localLength*sin(global_polar_angle) + localLength*cos(global_polar_angle))) controller.rumble("----------");
@@ -255,6 +261,7 @@ void odometryTask() {
 }
 
 // keeps track of the position of the robot in inches(imagines the field as a cartesian plane, with (0, 0) being a corner)
+/*
 double lastLPosition = 0;
 double lastRPosition = 0;
 double lastH = 0;
@@ -289,6 +296,7 @@ void driveOdometryTask() {
     lastH = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
   }
 }
+*/
 
 double maxMoveSpeed = 550;
 double maxTurnSpeed = 350;
@@ -449,7 +457,7 @@ bool turn(double target, Pid tPID = turnPID, int timeout = 0, double extraTime =
   return false;
 }
 
-bool swerve(double tX, double tY, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
+bool swerve(double tX, double tY, Pid tPID = swervePID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
   driveDisabled = true;
 
   tPID.resetID();
@@ -490,7 +498,7 @@ bool swerve(double tX, double tY, Pid tPID = turnPID, int timeout = 0, double ex
   return false;
 }
 
-bool swerve(double target, Pid tPID = turnPID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
+bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTime = 0, double tolerance = 1) {
   driveDisabled = true;
 
   tPID.resetID();
@@ -544,13 +552,18 @@ void botMove(double dist, double vel, bool brake = true, bool block = true) {
 
 bool untilTargetPos(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
   if (timeout <= 0) timeout = 9999999;
-  while (positionError(tX, tY) > tolerance && timeout > 0) {
-    timeout -= 10;
+  int time = 0;
+  int stalledStates = 0;
+  while (positionError(tX, tY) > tolerance && time < timeout) {
+    // if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.05986479334 && time > fmax(timeout / 2, 500)) stalledStates++;
+    // else stalledStates = 0;
+    // if (stalledStates > 10) return false;
+    time += 10;
     pros::delay(10);
   }
   pros::delay(extraTime);
 	untilKeyPress();
-  if (timeout > 0) return true;
+  if (time < timeout) return true;
   // botMove((driveMode*2-3)*5, 300);
   return false;
 }
