@@ -304,6 +304,8 @@ bool driveDisabled = true;
 bool arcMovement = false;
 int driveMode = 0; // 0-both, 1-forwards, 2-backwards
 int chainMode = 0; // 0-regular chain, 1-turn chain
+Pid odomMPID = movePID;
+Pid odomTPID = turnPID;
 double targetX = 0;
 double targetY = 0;
 double chainX = 0;
@@ -313,45 +315,45 @@ void setTargetPos(double x, double y) {
   targetY = y;
   chainX = x;
   chainY = y;
-  movePID.resetID();
-  turnPID.resetID();
+  odomMPID.resetID();
+  odomTPID.resetID();
   pros::delay(30);
 }
 void setChainPos(double x, double y) {
   chainX = x;
   chainY = y;
-  turnPID.resetID();
+  odomTPID.resetID();
   pros::delay(30);
 }
 void driveAutoTask() {
   while (true) {
     if (!arcMovement && positionError(targetX, targetY) > 0.5) {
       if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
-        turnPID.update(headingError(chainX, chainY));
+        odomTPID.update(headingError(chainX, chainY));
       } else {
-        turnPID.update(headingError(heading(chainX, chainY) + 180));
+        odomTPID.update(headingError(heading(chainX, chainY) + 180));
       }
 	  double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
 	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
-      movePID.update(out);
+      odomMPID.update(out);
     } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-      movePID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
+      odomMPID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
     } else {
-      movePID.update(0);
-      turnPID.update(0);
+      odomMPID.update(0);
+      odomTPID.update(0);
     }
 
     // movePID.maxLim = maxMoveSpeed;
-    movePID.maxLim = fmin(maxMoveSpeed, 450);
-    turnPID.maxLim = maxTurnSpeed;
+    odomMPID.maxLim = maxMoveSpeed;
+    odomTPID.maxLim = maxTurnSpeed;
     if (!driveDisabled && !arcMovement) {
-      drive.moveVelocityLeft(movePID.calculateOut() + turnPID.calculateOut());
-      drive.moveVelocityRight(movePID.calculateOut() - turnPID.calculateOut());
+      drive.moveVelocityLeft(odomMPID.calculateOut() + odomTPID.calculateOut());
+      drive.moveVelocityRight(odomMPID.calculateOut() - odomTPID.calculateOut());
     } else if (!driveDisabled && arcMovement) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
-      drive.moveVelocityLeft(movePID.calculateOut() * (radius + 10 / 2)/radius);
-      drive.moveVelocityRight(movePID.calculateOut() * (radius - 10 / 2)/radius);
+      drive.moveVelocityLeft(odomMPID.calculateOut() * (radius + 10 / 2)/radius);
+      drive.moveVelocityRight(odomMPID.calculateOut() * (radius - 10 / 2)/radius);
     }
 
     pros::delay(10);
@@ -550,18 +552,17 @@ void botMove(double dist, double vel, bool brake = true, bool block = true) {
   driveDisabled = false;
 }
 
-bool untilTargetPos(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+bool untilTargetPos(double tolerance, int timeout = 0, bool antiStall = false, int stallStates = 10, double tX = chainX, double tY = chainY) {
   if (timeout <= 0) timeout = 9999999;
   int time = 0;
   int stalledStates = 0;
   while (positionError(tX, tY) > tolerance && time < timeout) {
-    // if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.05986479334 && time > fmax(timeout / 2, 500)) stalledStates++;
-    // else stalledStates = 0;
-    // if (stalledStates > 10) return false;
+    if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02993239667 && time > 500) stalledStates++;
+    else stalledStates = 0;
+    if (stalledStates > stallStates && antiStall) return false;
     time += 10;
     pros::delay(10);
   }
-  pros::delay(extraTime);
 	untilKeyPress();
   if (time < timeout) return true;
   // botMove((driveMode*2-3)*5, 300);

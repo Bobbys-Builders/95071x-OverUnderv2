@@ -71,6 +71,20 @@ public:
     derivative = 0;
     lasterror = 0;
   }
+  void setTo(Pid pid) {
+    tVal = pid.tVal;
+    maxLim = pid.maxLim;
+    minLim = pid.minLim;
+    iLim = pid.iLim;
+    error = pid.error;
+    integral = pid.integral;
+    derivative = pid.derivative;
+    lasterror = pid.lasterror;
+    out = pid.out;
+    tolerance = pid.tolerance;
+
+    resetID();
+  }
   bool withinTarget() {
     if (fabs(error) > tolerance) {
       integral = 0;
