@@ -971,7 +971,7 @@ void skillsSegA() {
     setTargetPos(3*24, 5*24);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
-    botMove(-5, 450);
+    botMove(-4, 450);
     wings.extBRWing();
     while(!updateButtons()) {
         kicker.target = 170;
@@ -1015,7 +1015,7 @@ void skillsAuton() {
     setTargetPos(3*24, 5*24);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
-    botMove(-5, 450);
+    botMove(-4, 450);
     wings.extBRWing();
     int t = 0;
     while(t < 2500) {
@@ -1053,50 +1053,53 @@ void skillsAuton() {
     driveDisabled = true;
     wings.retFrontWings();
     botMove(-15, 450);
-    setTargetPos(xPos-200, yPos);
-    maxMoveSpeed = 0;
-    untilTargetH(10, 2000);
+    // setTargetPos(xPos-200, yPos);
+    // maxMoveSpeed = 0;
+    // untilTargetH(10, 2000);
     botMove(xPos-(1*24+10)+10, 450);
     intake.moveVelocity(200);
     botMove(-15, 450);
     driveDisabled = false;
 
     driveMode = 1; // align for alley push
-    setTargetPos(1*24+9, 16);
-    setChainPos(1*24+14, 1*24+12);
+    // setTargetPos(xPos-12, 24);
+    setTargetPos(xPos-12, 1*24+16);
     maxMoveSpeed = 0;
     untilTargetH(10, 2000);
     intake.moveVelocity(0);
-    maxMoveSpeed = 450;
-    untilTargetPos(15, 2000);
-    setChainPos(1*24+9, 16);
-    maxMoveSpeed = 450;
-    if(!untilTargetPos(10, 2000, true, 10)) botMove(-5, 450);
-    setChainPos(12, 2*24+12);
-    maxMoveSpeed = 0;
-    untilTargetH(10, 2000);
-
-    // swerve(6, 3*24, turnPID, 2000, 0, 25);
+    maxMoveSpeed = 300;
+    // untilTargetPos(15, 2000);
+    // driveMode = 0;
+    // setChainPos(xPos-12, 24);
+    // maxMoveSpeed = 450;
+    if(!untilTargetPos(15, 2000, true, 10)) botMove(-5, 450);
+    // setTargetPos(xPos-200, yPos-50);
+    // maxMoveSpeed = 0;
+    // untilTargetH(10, 2000);
+    driveMode = 1;
+    maxTurnSpeed = 400;
+    swerve(12, 2*24+12, swervePID2, 1500, 0, 15);
+    maxTurnSpeed = 600;
 
     driveMode = 1; // alley push
     intake.moveVelocity(-200);
     setTargetPos(12, 4*24);
     setChainPos(12, 2*24);
     // maxMoveSpeed = 0;
-    // untilTargetH(5, 2000);
+    // untilTargetH(10, 2000);
     maxMoveSpeed = 450;
     untilTargetPos(15, 2000);
-    wings.extFrontWings();
+    // wings.extFrontWings();
     setChainPos(8, 3*24);
     maxMoveSpeed = 600;
     untilTargetPos(15, 2000);
     kicker.target = 0;
     kicker.velocity = 0;
     kicker.moveVelocity(0);
-    setChainPos(12, 4*24);
+    setChainPos(12, 4*24+8);
     maxMoveSpeed = 450;
-    untilTargetPos(10, 2000);
-    wings.retFrontWings();
+    untilTargetPos(15, 2000);
+    // wings.retFrontWings();
     // botMove(-15, 450);
     botMove(-5, 450);
 
@@ -1111,7 +1114,7 @@ void skillsAuton() {
     setChainPos(xPos-200, yPos);
     maxMoveSpeed = 0;
     untilTargetH(60, 2000);
-    setChainPos(xPos, yPos+200);
+    setChainPos(xPos+20, yPos+200);
     maxMoveSpeed = 0;
     untilTargetH(15, 2000);
     odomTPID.setTo(turnPID);
@@ -1121,7 +1124,7 @@ void skillsAuton() {
     untilTargetPos(25, 2000);
     setChainPos(2*24+2, 5*24+12); // push 1
     maxMoveSpeed = 600;
-    untilTargetPos(5, 1000);
+    untilTargetPos(5, 1500, true);
     // if (xPos < 2*24-4) { // extra pushes
         botMove(10, 600);
         // untilTargetPos(10, 2000);
@@ -1129,7 +1132,10 @@ void skillsAuton() {
         // setTargetPos(2*24, 5*24+16);
         // maxMoveSpeed = 0;
         // untilTargetH(10, 1000);
-        botMove(-30, 600);
+        drive.moveVelocityLeft(-600);
+        drive.moveVelocityRight(-600);
+        untilTargetPos(-1, 1500, true);
+        setPos(3*24-33.5, 6*24-10);
     // }
     wings.retBackWings();
     botMove(5, 450);
@@ -1152,23 +1158,25 @@ void skillsAuton() {
     setChainPos(2*24, 4*24-8);
     maxMoveSpeed = 300;
     untilTargetPos(10, 2000);
-    setTargetPos(xPos+400, yPos+200);
-    maxMoveSpeed = 0;
-    untilTargetH(15, 2000);
-    // swerve(2*24+16, 5*24-2, swervePID, 2000, 0, 15);
+    // setTargetPos(xPos+400, yPos+200);
+    // maxMoveSpeed = 0;
+    // untilTargetH(15, 2000);z
+    swerve(2*24+16, 5*24-2, swervePID, 2000, 0, 15);
     setChainPos(2*24+16, 5*24-6);
-    maxMoveSpeed = 0;
-    untilTargetH(15, 2000);
+    // maxMoveSpeed = 0;
+    // untilTargetH(15, 2000);
     wings.extFrontWings();
     // setChainPos(2*24+16, 5*24-6);
     maxMoveSpeed = 600;
-    untilTargetPos(5, 1500);
+    untilTargetPos(5, 1500, true);
     // if (targetY-yPos > 5) { // extra pushes
         botMove(-10, 450);
         setChainPos(xPos, yPos+200);
         maxMoveSpeed = 0;
         untilTargetH(10, 500);
-        botMove(25, 600);
+        drive.moveVelocityLeft(600);
+        drive.moveVelocityRight(600);
+        untilTargetPos(-1, 1500, true);
     // }
     wings.retFrontWings();
     botMove(-10, 450);
@@ -1176,12 +1184,12 @@ void skillsAuton() {
     driveMode = 1; // scoop corner 1
     setTargetPos(1*24+12, 4*24-8);
     maxMoveSpeed = 0;
-    untilTargetH(5, 1000);
+    untilTargetH(10, 1000);
     maxMoveSpeed = 450;
-    untilTargetPos(5, 2000);
+    untilTargetPos(5, 2000, true);
     setTargetPos(xPos, yPos+200);
     maxMoveSpeed = 0;
-    untilTargetH(15, 2000);
+    untilTargetH(15, 1000);
     wings.extBLWing();
     driveMode = 2;
     setTargetPos(3*24+12, fmin(yPos-8, 3*24+8));
@@ -1194,13 +1202,15 @@ void skillsAuton() {
     untilTargetH(5, 2000, 250);
     wings.extBackWings();
     maxMoveSpeed = 600;
-    untilTargetPos(5, 1500);
+    untilTargetPos(5, 1500, true);
     // if (targetY-yPos > 5) { // extra pushes
         botMove(10, 450);
         // setChainPos(xPos, yPos+200);
         // maxMoveSpeed = 0;
         // untilTargetH(10, 500);
-        botMove(-25, 600);
+        drive.moveVelocityLeft(-600);
+        drive.moveVelocityRight(-600);
+        untilTargetPos(-1, 1500, true);
         // setPos(xPos, 6*24-33.5);
     // }
     botMove(10, 450);
@@ -1209,7 +1219,7 @@ void skillsAuton() {
     driveMode = 1;
     setTargetPos(3*24, 4*24-12);
     maxMoveSpeed = 0;
-    untilTargetH(5, 2000);
+    untilTargetH(15, 2000);
     maxMoveSpeed = 450;
     untilTargetPos(5, 2000);
     // wings.extBLWing();
@@ -1223,13 +1233,16 @@ void skillsAuton() {
     untilTargetH(5, 2000);
     maxMoveSpeed = 450;
     untilTargetPos(15, 2000);
-    setChainPos(4*24-3, 3*24+10);
+    setChainPos(4*24+8, 3*24+10);
     maxMoveSpeed = 300;
-    untilTargetPos(10, 1000);
-    setTargetPos(4*24+12, 4*24);
+    untilTargetPos(10, 1000, true);
+    setTargetPos(4*24+12, 4*24+8);
+    maxMoveSpeed = 0;
+    untilTargetH(10, 1000);
     intake.moveVelocity(-200);
-    maxMoveSpeed = 300;
+    maxMoveSpeed = 450;
     untilTargetPos(10, 1000);
+    botMove(-10, 450);
     driveMode = 2;
     setTargetPos(3*24+12, 5*24-6);
     setChainPos(4*24, 4*24);
@@ -1250,14 +1263,18 @@ void skillsAuton() {
         timer -= 10;
         pros::delay(10);
     }
-    botMove(-10, 600);
+    drive.moveVelocityLeft(-600);
+    drive.moveVelocityRight(-600);
+    untilTargetPos(-1, 1500, true);
     arcMovement = false;
     // if (targetY-(5*24-6) > 5) { // extra pushes
         botMove(10, 450);
         setChainPos(xPos, yPos+200);
         maxMoveSpeed = 0;
         untilTargetH(10, 500);
-        botMove(-25, 600);
+        drive.moveVelocityLeft(-600);
+        drive.moveVelocityRight(-600);
+        untilTargetPos(-1, 1500, true);
         setPos(xPos, 6*24-33.5);
     // }
     botMove(10, 450);
@@ -1271,12 +1288,12 @@ void skillsAuton() {
     untilTargetH(5, 2000);
     maxMoveSpeed = 450;
     untilTargetPos(15, 2000);
-    wings.extFrontWings();
+    // wings.extFrontWings();
     intake.moveVelocity(-200);
     setChainPos(xPos, yPos+200);
     maxMoveSpeed = 0;
     untilTargetH(10, 2000);
-    wings.retFrontWings();
+    // wings.retFrontWings();
     driveMode = 2;
     setChainPos(5*24+12, 4*24+12);
     maxMoveSpeed = 0;
@@ -1304,21 +1321,24 @@ void skillsAuton() {
 
     setChainPos(4*24+4, 5*24+12); // push 5
     maxMoveSpeed = 600;
-    untilTargetPos(5, 1000);
+    untilTargetPos(5, 1000, true);
     // if (xPos-targetX > 5 && (pros::millis() - start) > 5000) { // extra pushes
         botMove(10, 450);
         // setChainPos(4*24+4, 5*24+16);
         // maxMoveSpeed = 0;
         // untilTargetH(10, 1000);
-        botMove(-30, 600);
-        botMove(10, 450);
-        botMove(-30, 600);
+        drive.moveVelocityLeft(-600);
+        drive.moveVelocityRight(-600);
+        untilTargetPos(-1, 1500, true);
+        setPos(3*24+33.5, yPos);
+        // botMove(10, 450);
+        // botMove(-30, 600);
     // }
 
     driveMode = 1; // climb
     setTargetPos(5*24+12, 4*24+12);
     maxMoveSpeed = 0;
-    untilTargetH(5, 1000);
+    untilTargetH(10, 1000);
     wings.retBRWing();
     maxMoveSpeed = 450;
     untilTargetPos(10, 2000);

@@ -81,8 +81,8 @@ void getPosition() {
 }
 
 void getKCKSpeed() {
-//   controller.print(1, 0, "KC Vel %0f, %.2f KPS                 ", kicker.getRealVelocity(), kicker.getRealVelocity() / 60);
-  controller.print(2, 0, "KC V %0f, %.2fKPS                 ", kicker.getPosition(), 0);
+  controller.print(2, 0, "KC V%0f, %.2fKPS                 ", kicker.getRealVelocity(), kicker.getRealVelocity() / 60);
+  // controller.print(2, 0, "KC V %0f, %.2fKPS                 ", kicker.getPosition(), 0);
 }
 
 void printTask() {
@@ -95,6 +95,7 @@ void printTask() {
 			getMaxTemperature();
 		}
 		if (printNum == 2) {
+			// getKCKSpeed();
 			getPosition();
 		}
 		
