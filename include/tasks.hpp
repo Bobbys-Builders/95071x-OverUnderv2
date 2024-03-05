@@ -76,7 +76,8 @@ void getIntakeSpeed() {
 // }
 
 void getPosition() {
-  controller.print(2, 0, "X%.1f Y%.1f H%.1f                 ", xPos, yPos, drive.imu.get_heading());
+  // controller.print(2, 0, "X%.1f Y%.1f H%.1f                 ", xPos, yPos, drive.imu.get_heading());
+  controller.print(2, 0, "X%.1f Y%.1f H%.1f                 ", xPos, yPos, drive.imu.get_roll());
   // master.print(0, 0, "X %.1f H %.1f                 ", xPosition, (drivetrain.getLeftPosition() + drivetrain.getRightPosition()) / 2 / ticksPerInch);
 }
 
