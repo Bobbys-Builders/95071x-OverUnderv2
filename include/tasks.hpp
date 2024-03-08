@@ -336,8 +336,16 @@ void driveAutoTask() {
         odomTPID.update(headingError(heading(chainX, chainY) + 180));
       }
 	  double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
-	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
       odomMPID.update(out);
+	//   double expectedX = xPos + odomMPID.calculateOut() * sin(drive.imu.getHeading())*343/600*4*M_PI/60;
+	//   double expectedY = yPos + odomMPID.calculateOut() * cos(drive.imu.getHeading())*343/600*4*M_PI/60;
+  //     if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+       
+  //  odomTPID.update(headingError(xPos+chainX-expectedX, yPos+chainY-expectedY));
+  //     } else {
+  //       odomTPID.update(headingError(heading(xPos+chainX-expectedX, yPos+chainY-expectedY) + 180));
+  //     }
+	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
     } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       odomMPID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
@@ -349,9 +357,10 @@ void driveAutoTask() {
     // movePID.maxLim = maxMoveSpeed;
     odomMPID.maxLim = maxMoveSpeed;
     odomTPID.maxLim = maxTurnSpeed;
+    double turnScaled = odomMPID.calculateOut() > 250 ? odomTPID.calculateOut() * (1+.5*((odomMPID.calculateOut()-250)/250)) : odomTPID.calculateOut();
     if (!driveDisabled && !arcMovement) {
-      drive.moveVelocityLeft(odomMPID.calculateOut() + odomTPID.calculateOut());
-      drive.moveVelocityRight(odomMPID.calculateOut() - odomTPID.calculateOut());
+      drive.moveVelocityLeft(odomMPID.calculateOut() + turnScaled);
+      drive.moveVelocityRight(odomMPID.calculateOut() - turnScaled);
     } else if (!driveDisabled && arcMovement) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       drive.moveVelocityLeft(odomMPID.calculateOut() * (radius + 10 / 2)/radius);
