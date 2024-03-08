@@ -112,10 +112,12 @@ static int MAP_CENTER_Y = 0;
 static int CIRCLE_RADIUS = 15;
 static lv_style_t style;
 static lv_style_t headingStyle;
+static lv_style_t historyStyle;
 
 //MUTABLE OBJECTS
 lv_obj_t * headingIndicator;
 lv_obj_t * arc;
+lv_obj_t * posHistory;
 
 void initVisualizer(){
   //BG
@@ -151,6 +153,17 @@ headingStyle.line.color = LV_COLOR_RED;
 headingStyle.line.width = 3;
 
 headingIndicator = lv_line_create(lv_scr_act(), NULL);
+lv_line_set_style(headingIndicator, &headingStyle);
+
+//HISTORY SETUP 
+lv_style_copy(&historyStyle, &lv_style_plain);
+historyStyle.line.color = LV_COLOR_GREEN;
+historyStyle.line.width = 3;
+
+posHistory =  lv_arc_create(lv_scr_act(),NULL);
+lv_arc_set_style(posHistory, LV_ARC_STYLE_MAIN, &historyStyle);
+lv_arc_set_angles(posHistory,0,360);
+lv_obj_set_size(posHistory, 5,5);
 
 }
 
@@ -167,7 +180,11 @@ lv_obj_align(arc, NULL, LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-CIRCLE_RADIUS, BOT_POS_Y
  lv_point_t line_points[] = { {BOT_POS_X,BOT_POS_Y},{BOT_POS_X+(CIRCLE_RADIUS-1)*cos(heading),BOT_POS_Y-(CIRCLE_RADIUS-1)*sin(heading)} };
 lv_line_set_points(headingIndicator, line_points, 2); 
 lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-lv_line_set_style(headingIndicator,&headingStyle);
+//CREATE HISTORY DRAG FOR POSITION MAPPING
+
+posHistory = lv_arc_create(lv_scr_act(), posHistory);
+lv_obj_align(posHistory, NULL,LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-2,BOT_POS_Y-2);
+
 }
 
 void kickerTask() {
@@ -258,7 +275,7 @@ void odometryTask() {
     // if (fabs(heading-lastHeading) > 10*RADIANS_DEGREE || sqrt(localLength*sin(global_polar_angle) + localLength*cos(global_polar_angle))) controller.rumble("----------");
 
 		lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
-	//	updateVisualizer(lastHeading);
+		updateVisualizer(lastHeading);
 	}
 }
 
