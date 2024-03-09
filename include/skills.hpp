@@ -142,7 +142,7 @@ void skillsAuton() {
     botMove(-15, 450);
    
     driveMode = 1; // scoop corner 1
-    setTargetPos(1*24+8,3*24+12);
+    setTargetPos(1*24+12,3*24+12);
     setChainPos(1*24+10, 4*24+12);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
@@ -151,7 +151,7 @@ void skillsAuton() {
     untilTargetPos(15, 2000, true);
     // if(!untilTargetPos(15, 2000, true)) botMove(-5, 450);
     wings.extFrontWings();
-    setChainPos(1*24+8, 3*24+12);
+    setChainPos(1*24+12, 3*24+12);
     untilTargetPos(15,2000,true);
     maxMoveSpeed = 300;
     setTargetPos(1*24+25,3*24+12);
