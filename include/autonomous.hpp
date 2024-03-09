@@ -933,7 +933,7 @@ void skillsPreauton() {
 
     driveMode = 2;
     maxTurnSpeed = 600;
-    swerve(4*24, 8, swervePID2, 0, 500);
+    swerve(4*24, 12, swervePID2, 0, 500);
     botMove(4, 300);
     
     driveDisabled = true;
@@ -947,14 +947,14 @@ void skillsSegA() {
     driveDisabled = false;
 
     intake.moveVelocity(-200); // ram in triballs
-    wings.extBLWing();
+    // wings.extBLWing();
     kicker.target = 170;
     driveDisabled = true;
     drive.moveVelocityLeft(-600);
     drive.moveVelocityRight(-600);
     untilTargetPos(0, 1500, true, 5);
     botMove(12, 450);
-    wings.retBLWing();
+    // wings.retBLWing();
     driveDisabled = false;
 
     driveMode = 1; // move to shooting position
@@ -991,14 +991,14 @@ void skillsAuton() {
     driveDisabled = false;
 
     intake.moveVelocity(-200); // ram in triballs
-    wings.extBLWing();
+    // wings.extBLWing();
     kicker.target = 170;
     driveDisabled = true;
     drive.moveVelocityLeft(-600);
     drive.moveVelocityRight(-600);
     untilTargetPos(0, 1500, true, 5);
     botMove(12, 450);
-    wings.retBLWing();
+    // wings.retBLWing();
     driveDisabled = false;
 
     driveMode = 1; // move to shooting position
@@ -1104,9 +1104,9 @@ void skillsAuton() {
     untilTargetPos(15, 2000);
     // wings.retFrontWings();
     // botMove(-15, 450);
-    botMove(-5, 450);
-    setTargetPos(xPos,yPos+19);
-    untilTargetPos(15, 2000);
+    // botMove(-5, 450);
+    // setTargetPos(xPos,yPos+19);
+    // untilTargetPos(15, 2000);
 
     // odomTPID.setTo(turnPID3);
     // driveMode = 2;
@@ -1148,7 +1148,7 @@ void skillsAuton() {
         drive.moveVelocityLeft(600);
         drive.moveVelocityRight(600);
         untilTargetPos(-1, 1500, true);
-        setPos(3*24-33.5, 6*24-10);
+        setPos(3*24-30.5, 6*24-10);
     driveDisabled = false;
     // }
     wings.retBackWings();
