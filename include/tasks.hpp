@@ -275,7 +275,7 @@ void odometryTask() {
     // if (fabs(heading-lastHeading) > 10*RADIANS_DEGREE || sqrt(localLength*sin(global_polar_angle) + localLength*cos(global_polar_angle))) controller.rumble("----------");
 
 		lastHeading = heading; // all angles are in radians, with 0 degrees being the wall closest to the drive team
-		updateVisualizer(lastHeading);
+		// updateVisualizer(lastHeading);
 	}
 }
 
