@@ -4,6 +4,7 @@
 #include "setup.hpp"
 #include "tasks.hpp"
 #include "teleop.hpp"
+#include "skills.hpp"
 
 void testAuton() {
     double start = pros::millis();
@@ -950,7 +951,7 @@ void skillsSegA() {
     // wings.extBLWing();
     kicker.target = 170;
     driveDisabled = true;
-    drive.moveVelocityLeft(-600);
+    drive.moveVelocityLeft(-400);
     drive.moveVelocityRight(-600);
     untilTargetPos(0, 1500, true, 5);
     botMove(12, 450);
@@ -970,9 +971,11 @@ void skillsSegA() {
     driveMode = 1;
     setTargetPos(3*24, 5*24);
     maxMoveSpeed = 0;
+    untilTargetH(15, 2000);
+    wings.extBRWing();
     untilTargetH(5, 2000);
     botMove(-4, 450);
-    wings.extBRWing();
+    // wings.extBRWing();
     while(!updateButtons()) {
         kicker.target = 170;
         kicker.velocity = 170;
@@ -985,7 +988,7 @@ void skillsSegA() {
     wings.retBackWings();
 }
 
-void skillsAuton() {
+void skillsAuton2() {
     double start = pros::millis();
     maxTurnSpeed = 600;
     driveDisabled = false;

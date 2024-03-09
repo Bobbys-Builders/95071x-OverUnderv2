@@ -182,8 +182,8 @@ lv_line_set_points(headingIndicator, line_points, 2);
 lv_obj_align(headingIndicator, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 //CREATE HISTORY DRAG FOR POSITION MAPPING
 
-posHistory = lv_arc_create(lv_scr_act(), posHistory);
-lv_obj_align(posHistory, NULL,LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-2,BOT_POS_Y-2);
+// posHistory = lv_arc_create(lv_scr_act(), posHistory);
+// lv_obj_align(posHistory, NULL,LV_ALIGN_IN_TOP_LEFT, BOT_POS_X-2,BOT_POS_Y-2);
 
 }
 
@@ -366,6 +366,7 @@ void driveAutoTask() {
     } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       odomMPID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
+      // odomMPID.update(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
     } else {
       odomMPID.update(0);
       odomTPID.update(0);
