@@ -33,8 +33,8 @@ void skillsAuton() {
     untilTargetH(5, 2000);
     botMove(-4, 450);
     int t = 0;
-    // while(t < 2500) {
-    while(t < 18000) {
+     while(t < 2500) {
+   // while(t < 18000) {
         kicker.target = 170;
         kicker.velocity = 170;
         kicker.moveVelocity(170);
@@ -116,14 +116,16 @@ void skillsAuton() {
     // botMove(-5, 450);
     // setTargetPos(xPos,yPos+19);
     // untilTargetPos(15, 2000);
-    setTargetPos(xPos+25, yPos+200);
-    maxMoveSpeed = 0;
+    maxTurnSpeed = 350;
+    setTargetPos(xPos+160, yPos+200);
+    maxMoveSpeed = 350;
     untilTargetH(10, 1500);
     setTargetPos(2*24+2, 5*24+12);
     // swerve(heading(xPos+100, yPos+160), swervePID2, 1500, 0, 15);
+    maxTurnSpeed = 600;
     driveDisabled = true;
     drive.moveVelocityLeft(600);
-    drive.moveVelocityRight(500);
+    drive.moveVelocityRight(300);
     // untilTargetH(10, 1500);
     untilTargetPos(-1, 1500, true);
     wings.retFrontWings();
