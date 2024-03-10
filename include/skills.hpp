@@ -33,8 +33,8 @@ void skillsAuton() {
     untilTargetH(5, 2000);
     botMove(-4, 450);
     int t = 0;
-    while(t < 2500) {
-    // while(t < 18000) {
+    // while(t < 2500) {
+    while(t < 18000) {
         kicker.target = 170;
         kicker.velocity = 170;
         kicker.moveVelocity(170);
@@ -116,14 +116,14 @@ void skillsAuton() {
     // botMove(-5, 450);
     // setTargetPos(xPos,yPos+19);
     // untilTargetPos(15, 2000);
-    setTargetPos(xPos+50, yPos+200);
-    maxMoveSpeed = 250;
+    setTargetPos(xPos+25, yPos+200);
+    maxMoveSpeed = 0;
     untilTargetH(10, 1500);
     setTargetPos(2*24+2, 5*24+12);
     // swerve(heading(xPos+100, yPos+160), swervePID2, 1500, 0, 15);
     driveDisabled = true;
     drive.moveVelocityLeft(600);
-    drive.moveVelocityRight(400);
+    drive.moveVelocityRight(500);
     // untilTargetH(10, 1500);
     untilTargetPos(-1, 1500, true);
     wings.retFrontWings();
@@ -144,7 +144,7 @@ void skillsAuton() {
     driveMode = 1; // scoop corner 1
     intake.moveVelocity(200);
     setTargetPos(1*24+10,3*24+15);
-    setChainPos(1*24+10, 4*24+12);
+    setChainPos(1*24+14, 4*24+12);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
     maxMoveSpeed = 450;
@@ -384,8 +384,6 @@ void skillsAuton() {
     setTargetPos(xPos+30, yPos-200);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, 250);
-    maxMoveSpeed = 450;
-    untilTargetPos(20, 2000);
     // climb.climbUp();
     // setTargetPos(xPos+150, yPos-200);
     // maxMoveSpeed = 0;
@@ -400,10 +398,10 @@ void skillsAuton() {
         drive.moveVelocityRight(450);
         pros::delay(10);
     }
-    pros::delay(250);
+    pros::delay(100);
     driveDisabled = true;
-    botMove(-1, 450);
     climb.climbDown();
+    botMove(-1, 450);
     driveDisabled = true;
 
     kicker.target = 200;
