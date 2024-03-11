@@ -972,7 +972,94 @@ void farElim6Preauton() {
     // maxTurnConstant = 35;
     drive.stop();
 }
+void farElim6AutonDouble() {
+    double start = pros::millis();
+    driveDisabled  = false;
+    drive.stop();
+    drive.hold();
+    intake.moveVelocity(-200); 
+     wings.extFrontWings();
+    driveMode = 1;
+    setTargetPos(3*24+6,3*24+8);
+    setChainPos(4*24-4,4*24);
+    maxMoveSpeed = 600;
+    untilTargetPos(25,2000);
+   wings.retFrontWings();
+    intake.moveVelocity(200);
+    setChainPos(3*24+6,3*24+8);
+    untilTargetPos(8,2000);
+    driveMode = 2;
+    setTargetPos(5*24+12,4*24+12);
+    untilTargetPos(24,2000);
+    maxMoveSpeed = 0;
+    intake.moveVelocity(-200);
+    
+    driveMode = 1;
+    setTargetPos(4*24+3,5*24+12);
+    untilTargetH(12,1200);
+    setTargetPos(3*24+12,5*24+12);
+    untilTargetH(5,1500);
+    maxMoveSpeed = 450;
+    intake.moveVelocity(200);
+    untilTargetPos(5,2000);
+    driveMode = 2;
+    setTargetPos(4*24+3,5*24+12);
+    setChainPos(5*24+12,4*24+18);
+    untilTargetPos(5,2000);
+    intake.moveVelocity(0);
+    setChainPos(4.75*24,5*24+12);
+    wings.extBLWing();
+    untilTargetPos(5,2000);
+    setChainPos(4*24+3,5*24+12);
+    wings.retBLWing();
+    untilTargetPos(5,2000);
+    setTargetPos(4.75*24,5*24+8);
+    untilTargetPos(5,2000);
+    
+    driveMode = 1;
+    setTargetPos(4*24+3,5*24+12);
+    maxMoveSpeed=0;
+    untilTargetH(10,1000);
+    maxMoveSpeed =600;
+    untilTargetPos(6,2000);
+    maxMoveSpeed = 450;
+    driveMode = 2;
+    setTargetPos(4*24+16,5*24+8);
+    untilTargetPos(6,2000);
+    driveMode = 1;
+    setTargetPos(4*24+3,3*24+12);
+    maxMoveSpeed = 0;
+    untilTargetH(5,2000);
+    maxMoveSpeed = 600;
+    intake.moveVelocity(200);
+    untilTargetPos(5,2000);
+    maxMoveSpeed = 450;
+    setTargetPos(3*24+7,4*24+18);
+    setChainPos(3*24+7,3*24+17);
+    maxMoveSpeed=0;
+    untilTargetH(5,2000);
+    maxMoveSpeed = 450
+    wings.extFrontWings();
+    intake.moveVelocity(0);
+    untilTargetPos(5,2000);
+    maxMoveSpeed = 600;
+    setChainPos(3*24+7,4*24+18);
+    untilTargetPos(5,2000);
+wings.retFrontWings();
 
+    print_task.suspend();
+    drive.stop();
+    pros::delay(500);
+    controller.print(0, 0, "%.0f                             ", (pros::millis() - start));
+    pros::delay(500);
+    controller.print(1, 0, "X: %.1f Y: %.1f H: %.1f          ", xPos, yPos, drive.imu.get_heading());
+    pros::delay(4000);
+    print_task.resume();
+
+
+
+
+}
 void farElim6Auton() {
     double start = pros::millis();
     driveDisabled = false;
