@@ -70,7 +70,7 @@ void skillsAuton() {
     botMove(-15, 450);
     botMove(xPos-(1*24+10)+10, 450);
     intake.moveVelocity(200);
-    botMove(-15, 450);
+    botMove(-15, 300);
     driveDisabled = false;
 
     driveMode = 1; // align for alley push
@@ -92,12 +92,23 @@ void skillsAuton() {
     untilTargetH(15, 2000);
     setTargetPos(12, 4*24);
     setChainPos(12, 2*24);
+    maxMoveSpeed = 0;
+    untilTargetH(15, 2000);
     maxMoveSpeed = 450;
-    untilTargetPos(15, 2000);
-    setChainPos(8, 3*24);
-    maxMoveSpeed = 600;
-    untilTargetPos(25, 2000);
-    wings.extFrontWings();
+    if(!untilTargetPos(15, 2000, true)) {
+        botMove(-10, 450);
+        setChainPos(xPos-200, yPos+202);
+        maxMoveSpeed = 0;
+        untilTargetH(15, 2000);
+        setChainPos(8, 3*24);
+        maxMoveSpeed = 600;
+        untilTargetPos(25, 2000);
+    } else {
+        setChainPos(8, 3*24);
+        maxMoveSpeed = 600;
+        untilTargetPos(25, 2000);
+        wings.extFrontWings();
+    }
     kicker.target = 0;
     kicker.velocity = 0;
     kicker.moveVelocity(0);
@@ -117,6 +128,7 @@ void skillsAuton() {
     // setTargetPos(xPos,yPos+19);
     // untilTargetPos(15, 2000);
     maxTurnSpeed = 350;
+    wings.extFrontWings();
     setTargetPos(xPos+160, yPos+200);
     maxMoveSpeed = 350;
     untilTargetH(10, 1500);
@@ -139,7 +151,7 @@ void skillsAuton() {
     drive.moveVelocityRight(600);
     untilTargetPos(-1, 1500, true);
     // setPos(1*24+20, 6*24-10);
-    setPos(1*24+20, yPos);
+    setPos(1*24+20, yPos); //don't reset position anymore
     driveDisabled = false;
     wings.retBackWings();
     botMove(-10, 450);
@@ -151,34 +163,49 @@ void skillsAuton() {
     maxMoveSpeed = 0;
     untilTargetH(5, 2000);
     maxMoveSpeed = 450;
-    untilTargetPos(15, 2000, true);
-    // if(!untilTargetPos(15, 2000, true)) botMove(-5, 450);
-    setChainPos(1*24+8, 3*24+15);
-    maxMoveSpeed = 300;
-    untilTargetPos(15,2000,true);
-    setTargetPos(xPos+200, yPos-100);
-    maxMoveSpeed = 250;
-    if(!untilTargetH(15, 2000)) {
-        driveMode = 2;
-        setTargetPos(2*24+12, 5*24+6);
+    if (!untilTargetPos(15, 2000, true)) {
+        botMove(-10, 2000);
+        setTargetPos(2*24+4, 3*24+12);
         maxMoveSpeed = 0;
         untilTargetH(10, 2000);
-    }
-    // setTargetPos(1*24+25,3*24+12);
-    // untilTargetPos(10,2000,true);
-    // maxMoveSpeed = 0;
-    // setTargetPos(xPos -30, yPos -200);
-    // untilTargetH(15,2000);
-    // maxMoveSpeed = 300;
-        // wings.retFrontWings();
-    else { driveMode = 2;
-    intake.moveVelocity(-200);
-    botMove(10, 450);
-    if (!swerve(2*24+16, 5*24, swervePID2, 1500, 0, 15)) {
+        maxMoveSpeed = 300;
+        untilTargetPos(5, 2000, true);
+
+        driveMode = 2;
         setTargetPos(2*24+16, 5*24);
         maxMoveSpeed = 0;
         untilTargetH(10, 2000);
-    }}
+    } else {
+    // if(!untilTargetPos(15, 2000, true)) botMove(-5, 450);
+        setChainPos(1*24+8, 3*24+15);
+        maxMoveSpeed = 300;
+        untilTargetPos(15,2000,true);
+        setTargetPos(xPos+200, yPos-100);
+        maxMoveSpeed = 250;
+        if(!untilTargetH(15, 2000)) {
+            driveMode = 2;
+            setTargetPos(2*24+12, 5*24+6);
+            maxMoveSpeed = 0;
+            untilTargetH(10, 2000);
+        }
+        // setTargetPos(1*24+25,3*24+12);
+        // untilTargetPos(10,2000,true);
+        // maxMoveSpeed = 0;
+        // setTargetPos(xPos -30, yPos -200);
+        // untilTargetH(15,2000);
+        // maxMoveSpeed = 300;
+            // wings.retFrontWings();
+        else {
+            driveMode = 2;
+            intake.moveVelocity(-200);
+            botMove(10, 450);
+            if (!swerve(2*24+16, 5*24, swervePID2, 1500, 0, 15)) {
+                setTargetPos(2*24+16, 5*24);
+                maxMoveSpeed = 0;
+                untilTargetH(10, 2000);
+            }
+        }
+    }
     intake.moveVelocity(-200);
     // botMove(-5, 450);
 
@@ -216,7 +243,7 @@ void skillsAuton() {
 
     driveMode = 1; // scoop corner 2
     intake.moveVelocity(200);
-    setTargetPos(3*24-16, 4*24-12);
+    setTargetPos(3*24-16, 4*24-16);
     maxMoveSpeed = 0;
     untilTargetH(5, 1500);
     maxMoveSpeed = 450;

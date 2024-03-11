@@ -882,7 +882,16 @@ void farSafe6Auton() {
     untilTargetPos(15, 2000);
     setChainPos(4*24, 3*24+12);
     maxMoveSpeed = 300;
-    untilTargetPos(5, 2000, true);
+    int t = 2000;
+    int stalledStates = 0;
+    while (positionError(chainX, chainY) > 5 && fabs(drive.imu.get_roll()) < 15 && stalledStates < 10 && t > 0) {
+        if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02993239667 && t < 1500) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 10) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    // untilTargetPos(5, 2000, true);
 
     botMove(-2, 450);
     
@@ -902,7 +911,15 @@ void farSafe6Auton() {
     untilTargetH(5, 2000);
     maxMoveSpeed = 300;
     maxTurnSpeed = 0;
-    untilTargetPos(5, 1500, true);
+    t = 2000;
+    stalledStates = 0;
+    while (positionError(chainX, chainY) > 5 && fabs(drive.imu.get_roll()) < 15 && && stalledStates < 10 && t > 0) {
+        if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02993239667 && t < 1500) stalledStates++;
+        else stalledStates = 0;
+        t -= 10;
+        pros::delay(10);
+    }
+    // untilTargetPos(5, 1500, true);
     pros::delay(250);
     // botMove(-10, 450);
     
