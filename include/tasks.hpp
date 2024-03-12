@@ -231,6 +231,7 @@ double positionError(double x, double y) {
 double lastHeading;
 double deltaX = 0;
 double deltaY = 0;
+double deltaH = 0;
 void odometryTask() {
 	lastHeading = (90-(drive.imu.get_heading()+90)) * RADIANS_DEGREE; // all angles are in radians, with 0 degrees being the wall closest to the drive team
 	while (true) {
@@ -270,6 +271,7 @@ void odometryTask() {
 		yPos-=fmax(-1, fmin(1, localLength*sin(global_polar_angle)));
 		deltaX=localLength*cos(global_polar_angle); // adds the relative changes to the actual positions
 		deltaY=-localLength*sin(global_polar_angle);
+    deltaH = heading - lastHeading;
 
 
     // if (fabs(heading-lastHeading) > 10*RADIANS_DEGREE || sqrt(localLength*sin(global_polar_angle) + localLength*cos(global_polar_angle))) controller.rumble("----------");
@@ -372,7 +374,7 @@ void driveAutoTask() {
       odomTPID.update(0);
     }
 
-    // movePID.maxLim = maxMoveSpeed;
+    // movePID.maxLim = fmin(maxMoveSpeed, 450);
     odomMPID.maxLim = maxMoveSpeed;
     odomTPID.maxLim = maxTurnSpeed;
     double turnScaled = odomMPID.calculateOut() > 250 ? odomTPID.calculateOut() * (1+.5*((odomMPID.calculateOut()-250)/250)) : odomTPID.calculateOut();
@@ -598,21 +600,32 @@ bool untilTargetPos(double tolerance, int timeout = 0, bool antiStall = false, i
   return false;
 }
 
-bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, double tX = chainX, double tY = chainY) {
+bool untilTargetH(double tolerance, int timeout = 0, double extraTime = 0, bool antiStall = false, int stallStates = 10, double tX = chainX, double tY = chainY) {
   if (timeout <= 0) timeout = 9999999;
+  int time = 0;
+  int stalledStates = 0;
   if (driveMode == 0) {
-    while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && timeout > 0) {
-      timeout -= 10;
+    while (fmin(fabs(headingError(tX, tY)), fabs(headingError(heading(tX, tY) + 180))) > tolerance && time < timeout) {
+      if (fabs(deltaH) < 0.05 && time > 500) stalledStates++;
+      else stalledStates = 0;
+      if (stalledStates > stallStates && antiStall) return false;
+      time += 10;
       pros::delay(10);
     }
   } else if (driveMode == 1) {
-    while (fabs(headingError(tX, tY)) > tolerance && timeout > 0) {
-      timeout -= 10;
+    while (fabs(headingError(tX, tY)) > tolerance && time < timeout) {
+      if (fabs(deltaH) < 0.05 && time > 500) stalledStates++;
+      else stalledStates = 0;
+      if (stalledStates > stallStates && antiStall) return false;
+      time += 10;
       pros::delay(10);
     }
   } else if (driveMode == 2) {
-    while (fabs(headingError(heading(tX, tY) + 180)) > tolerance && timeout > 0) {
-      timeout -= 10;
+    while (fabs(headingError(heading(tX, tY) + 180)) > tolerance && time < timeout) {
+      if (fabs(deltaH) < 0.05 && time > 500) stalledStates++;
+      else stalledStates = 0;
+      if (stalledStates > stallStates && antiStall) return false;
+      time += 10;
       pros::delay(10);
     }
   }

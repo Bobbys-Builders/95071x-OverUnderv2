@@ -112,7 +112,7 @@ void autonomous() {
 		break;
 
 		case 4:
-		closeElimAuton();
+		closeElimAuton2();
 		break;
 
 		case 5:
@@ -196,7 +196,7 @@ void opcontrol() {
 						break;
 
 						case 4:
-						closeElimAuton();
+						closeElimAuton2();
 						break;
 
 						case 5:
