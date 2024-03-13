@@ -87,7 +87,7 @@ public:
   }
   bool withinTarget() {
     if (fabs(error) > tolerance) {
-      integral = 0;
+      // integral = 0;
       return false;
     }
     integral = 0;

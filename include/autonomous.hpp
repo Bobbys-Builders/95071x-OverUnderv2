@@ -1458,8 +1458,8 @@ void skillsAuton() {
     untilTargetH(5, 2000);
     botMove(-4, 450);
     int t = 0;
-    //  while(t < 2500) {
-   while(t < 18000) {
+    while(t < 2500) {
+//    while(t < 18000) {
         kicker.target = 170;
         kicker.velocity = 170;
         kicker.moveVelocity(170);
@@ -1499,7 +1499,7 @@ void skillsAuton() {
     driveDisabled = false;
 
     driveMode = 1; // align for alley push
-    setTargetPos(xPos-14, 1*24+6);
+    setTargetPos(fmin(xPos-14, 1*24+8), 1*24+6);
     maxMoveSpeed = 0;
     untilTargetH(10, 2000);
     intake.moveVelocity(0);
@@ -1522,12 +1522,16 @@ void skillsAuton() {
     maxMoveSpeed = 450;
     if(!untilTargetPos(15, 2000, true)) {
         botMove(-10, 450);
-        setChainPos(xPos-200, yPos+202);
+        setChainPos(xPos-200, yPos+200);
         maxMoveSpeed = 0;
         untilTargetH(15, 2000);
         setChainPos(8, 3*24);
         maxMoveSpeed = 600;
-        untilTargetPos(25, 2000);
+        if (!untilTargetPos(25, 2000, true)) {
+            setChainPos(xPos-20, yPos+200);
+            maxMoveSpeed = 0;
+            untilTargetH(15, 2000);
+        }
     } else {
         setChainPos(8, 3*24);
         maxMoveSpeed = 600;

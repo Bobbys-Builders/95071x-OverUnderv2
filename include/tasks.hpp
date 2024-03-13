@@ -346,16 +346,26 @@ void setChainPos(double x, double y) {
   odomTPID.resetID();
   pros::delay(30);
 }
+/*
 void driveAutoTask() {
   while (true) {
+    double power, turn;
+    // movePID.maxLim = fmin(maxMoveSpeed, 450); // set limits
+    odomMPID.maxLim = maxMoveSpeed;
+    odomTPID.maxLim = maxTurnSpeed;
+
     if (!arcMovement && positionError(targetX, targetY) > 0.5) {
       if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
         odomTPID.update(headingError(chainX, chainY));
+        turn = odomTPID.calculateOut();
       } else {
         odomTPID.update(headingError(heading(chainX, chainY) + 180));
+        turn = odomTPID.calculateOut();
       }
-	  double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
-      odomMPID.update(out);
+	  // double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
+      // odomMPID.update(out);
+      odomMPID.update(positionError(targetX, targetY));
+      power = odomMPID.calculateOut() * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
 	//   double expectedX = xPos + odomMPID.calculateOut() * sin(drive.imu.getHeading())*343/600*4*M_PI/60;
 	//   double expectedY = yPos + odomMPID.calculateOut() * cos(drive.imu.getHeading())*343/600*4*M_PI/60;
   //     if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
@@ -365,7 +375,68 @@ void driveAutoTask() {
   //       odomTPID.update(headingError(heading(xPos+chainX-expectedX, yPos+chainY-expectedY) + 180));
   //     }
 	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
-    } else if (arcMovement  && positionError(targetX, targetY) > 0.5) {
+    } else if (arcMovement && positionError(targetX, targetY) > 0.5) {
+      double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
+      odomMPID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
+      power = odomMPID.calculateOut();
+      // odomMPID.update(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
+    } else {
+      odomMPID.update(0);
+      odomTPID.update(0);
+      power = 0;
+      turn = 0;
+    }
+
+    // double turnScaled = fabs(odomMPID.calculateOut()) > 250 ? odomTPID.calculateOut() * (1+.5*((fabs(odomMPID.calculateOut())-250)/250)) : odomTPID.calculateOut();
+    double turnScaled = fabs(power) > 250 ? turn * (1+.5*((fabs(power)-250)/250)) : turn;
+    if (!driveDisabled && !arcMovement) {
+      drive.moveVelocityLeft(power + turnScaled);
+      drive.moveVelocityRight(power - turnScaled);
+    } else if (!driveDisabled && arcMovement) {
+      double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
+      drive.moveVelocityLeft(power * (radius + 10 / 2)/radius);
+      drive.moveVelocityRight(power * (radius - 10 / 2)/radius);
+    }
+
+    pros::delay(10);
+
+    // controller.print(0, 0, "%.1f %.1f %.1f", xPos, yPos, drive.imu.get_heading());
+    // std::cout << xPosition << " "
+    //  << yPosition << " "
+    //  << -headingError(0) << " "
+    //  << moveVelocity << " " 
+    //  << turnVelocity << std::endl;
+  }
+}
+*/
+void driveAutoTask() {
+  while (true) {
+    // double power, turn;
+    // movePID.maxLim = fmin(maxMoveSpeed, 450); // set limits
+    odomMPID.maxLim = maxMoveSpeed;
+    odomTPID.maxLim = maxTurnSpeed;
+
+    if (!arcMovement && positionError(targetX, targetY) > 0.5) {
+      if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+        odomTPID.update(headingError(chainX, chainY));
+        // turn = odomTPID.calculateOut();
+      } else {
+        odomTPID.update(headingError(heading(chainX, chainY) + 180));
+        // turn = odomTPID.calculateOut();
+      }
+	  // double out = positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE);
+      // odomMPID.update(out);
+      odomMPID.update(positionError(targetX, targetY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
+	//   double expectedX = xPos + odomMPID.calculateOut() * sin(drive.imu.getHeading())*343/600*4*M_PI/60;
+	//   double expectedY = yPos + odomMPID.calculateOut() * cos(drive.imu.getHeading())*343/600*4*M_PI/60;
+  //     if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) {
+       
+  //  odomTPID.update(headingError(xPos+chainX-expectedX, yPos+chainY-expectedY));
+  //     } else {
+  //       odomTPID.update(headingError(heading(xPos+chainX-expectedX, yPos+chainY-expectedY) + 180));
+  //     }
+	//   if (fabs(headingError(chainX, chainY)) > 75) out = 0;
+    } else if (arcMovement && positionError(targetX, targetY) > 0.5) {
       double radius = positionError(targetX, targetY)/2 / sin(headingError(targetX, targetY) * RADIANS_DEGREE);
       odomMPID.update(sqrt(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE)) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
       // odomMPID.update(fabs(radius * 2*headingError(targetX, targetY) * RADIANS_DEGREE) * sign(cos(headingError(targetX, targetY) * RADIANS_DEGREE)));
@@ -374,10 +445,8 @@ void driveAutoTask() {
       odomTPID.update(0);
     }
 
-    // movePID.maxLim = fmin(maxMoveSpeed, 450);
-    odomMPID.maxLim = maxMoveSpeed;
-    odomTPID.maxLim = maxTurnSpeed;
-    double turnScaled = odomMPID.calculateOut() > 250 ? odomTPID.calculateOut() * (1+.5*((odomMPID.calculateOut()-250)/250)) : odomTPID.calculateOut();
+    double turnScaled = fabs(odomMPID.calculateOut()) > 250 ? odomTPID.calculateOut() * (1+.5*((fabs(odomMPID.calculateOut())-250)/250)) : odomTPID.calculateOut();
+    // double turnScaled = fabs(power) > 250 ? turn * (1+.5*((fabs(power)-250)/250)) : turn;
     if (!driveDisabled && !arcMovement) {
       drive.moveVelocityLeft(odomMPID.calculateOut() + turnScaled);
       drive.moveVelocityRight(odomMPID.calculateOut() - turnScaled);
@@ -574,6 +643,7 @@ bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTi
 
 void botMove(double dist, double vel, bool brake = true, bool block = true) {
   driveDisabled = true;
+  pros::delay(20);
   drive.moveRelativeLeft(TICKS_INCH * dist, vel);
   drive.moveRelativeRight(TICKS_INCH * dist, vel);
 

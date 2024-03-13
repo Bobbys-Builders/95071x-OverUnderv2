@@ -64,11 +64,11 @@ Climb climb(EXP_PORT, CLMU_PORT, CLMD_PORT);
 Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
 
 // pid
-Pid movePID(0, 27, 0.001, 10, 20000, 600, 0);
-Pid turnPID(0, 2.2, 0.002, 0.5, 10000, 600, 0); // medium(~30-120)
-Pid turnPID2(0, 3, 0.002, 0.5, 10000, 600, 0); // small(<30)
-Pid turnPID3(0, 2.2, 0.003, 0.5, 10000, 600, 0); // large(120-180)
-Pid swervePID(0, 2.15, 0.003, 0.5, 10000, 600, 0);
-Pid swervePID2(0, 3, 0.003, 0.5, 10000, 600, 0);
+Pid movePID(0, 27, 0.000, 10, 20000, 600, 0);
+Pid turnPID(0, 2.2, 0.000, 0.5, 10000, 600, 0); // medium(~30-120)
+Pid turnPID2(0, 3, 0.000, 0.5, 10000, 600, 0); // small(<30)
+Pid turnPID3(0, 2.2, 0.000, 0.5, 10000, 600, 0); // large(120-180)
+Pid swervePID(0, 2.15, 0.000, 0.5, 10000, 600, 0);
+Pid swervePID2(0, 3, 0.000, 0.5, 10000, 600, 0);
 
 #endif
