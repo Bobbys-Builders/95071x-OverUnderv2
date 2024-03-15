@@ -171,10 +171,10 @@ void moveIntake() {
 			intake.moveVelocity(0);
 			break;
 		case 1:
-			intake.moveVelocity(200);
+			intake.moveVelocity(600);
 			break;
 		case 2:
-			intake.moveVelocity(-200);
+			intake.moveVelocity(-600);
 			break;
 	}
 }

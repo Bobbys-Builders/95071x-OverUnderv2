@@ -94,43 +94,45 @@ void autonomous() {
 	drive.odomPiston.set_value(false);
 
 	// drive.imu.set_heading(autoHeading);
-	switch (curSelected) {
-		case 0:
-		noAuton();
-		break;
+switch (curSelected) {
+						case 0:
+						testAuton();
+						break;
 
-		case 1:
-		closeSafeAuton();
-		break;
+						case 1:
+						closeSafeAuton();
+						break;
 
-		case 2:
-		closeAuton();
-		break;
+						case 2:
+						closeAuton();
+						break;
 
-		case 3:
-		closeStealAuton();
-		break;
+						case 3:
+						closeStealAuton();
+						break;
 
-		case 4:
-		closeElimAuton2();
-		break;
+						case 4:
+						closeElimAuton2();
+						break;
+						case 5:
+						closeQualsElims();
+						break;
+						case 6:
+						farSafeAuton();
+						break;
 
-		case 5:
-		farSafeAuton();
-		break;
+						case 7:
+						farSafe6Auton();
+						break;
 
-		case 6:
-		farSafe6Auton();
-		break;
+						case 8:
+						farElim6Auton2();
+						break;
 
-		case 7:
-		farElim6Auton2();
-		break;
-
-		case 8:
-		skillsAuton();
-		break;
-	}
+						case 9:
+						skillsAuton();
+						break;
+					}
 }
 
 /**
@@ -198,20 +200,22 @@ void opcontrol() {
 						case 4:
 						closeElimAuton2();
 						break;
-
 						case 5:
+						closeQualsElims();
+						break;
+						case 6:
 						farSafeAuton();
 						break;
 
-						case 6:
+						case 7:
 						farSafe6Auton();
 						break;
 
-						case 7:
+						case 8:
 						farElim6Auton2();
 						break;
 
-						case 8:
+						case 9:
 						skillsAuton();
 						break;
 					}

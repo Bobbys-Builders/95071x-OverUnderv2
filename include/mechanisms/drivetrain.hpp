@@ -29,6 +29,21 @@ public:
     {
         vOdom.reset_position();
         hOdom.reset_position();
+        FLMotor.set_current_limit(2500);
+        MLMotor.set_current_limit(2500);
+        BLMotor.set_current_limit(2500);
+        FRMotor.set_current_limit(2500);
+        MRMotor.set_current_limit(2500);
+        BRMotor.set_current_limit(2500);
+        
+        FLMotor.set_voltage_limit(12000);
+        MLMotor.set_voltage_limit(12000);
+        BLMotor.set_voltage_limit(12000);
+        FRMotor.set_voltage_limit(12000);
+        MRMotor.set_voltage_limit(12000);
+        BRMotor.set_voltage_limit(12000);
+
+        
     }
 
     // telemetry
