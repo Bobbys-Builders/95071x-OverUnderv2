@@ -580,7 +580,7 @@ void closeElimAuton2() {
     untilTargetPos(35, 2000, true);
     intake.moveVelocity(600);
     maxMoveSpeed = 200;
-    untilTargetPos(12, 1500, true);
+    untilTargetPos(14, 1500, true);
     // botMove(positionError(targetX, targetY) - 12, 200);
     driveDisabled = true;
     drive.stop();
@@ -608,7 +608,7 @@ void closeElimAuton2() {
     maxMoveSpeed = 0;
     untilTargetH(10, 2000, 0, true);
     intake.moveVelocity(600);
-    botMove(positionError(targetX, targetY) - 12, 200);
+    botMove(positionError(targetX, targetY) - 15, 200);
     driveDisabled = true;
     pros::delay(250);
     driveDisabled = false;
@@ -698,7 +698,7 @@ void closeQualsElims() {
     untilTargetPos(35, 2000, true);
     intake.moveVelocity(600);
     maxMoveSpeed = 200;
-    untilTargetPos(12, 1500, true);
+    untilTargetPos(14, 1500, true);
     // botMove(positionError(targetX, targetY) - 12, 200);
     driveDisabled = true;
     drive.stop();
@@ -706,7 +706,7 @@ void closeQualsElims() {
     driveDisabled = false;
     // maxMoveSpeed = 300;
     // untilTargetPos(10, 2000, true);
-    botMove(-fabs((3*24+16-xPos)/cos(headingError(-90))), 300);
+    botMove(-fabs((3*24+16-xPos)), 300);
 
     setTargetPos(xPos, yPos+200);
     maxMoveSpeed = 0;
@@ -726,7 +726,7 @@ void closeQualsElims() {
     maxMoveSpeed = 0;
     untilTargetH(10, 2000, 0, true);
     intake.moveVelocity(600);
-    botMove(positionError(targetX, targetY) - 12, 200);
+    botMove(positionError(targetX, targetY) - 15, 200);
     driveDisabled = true;
     pros::delay(250);
     driveDisabled = false;
@@ -768,11 +768,8 @@ void closeQualsElims() {
     
     maxMoveSpeed = 0;
     untilTargetH(10, 2000);
-    botMove(3*24-14-yPos, 450);
-    // maxMoveSpeed= 200;
-    // untilTargetPos(10, 1500, true);
-    // wings.retFrontWings();
-
+    botMove(3*24-10-yPos, 200);
+    
     
     driveDisabled = true;
     driveMode = 0;
