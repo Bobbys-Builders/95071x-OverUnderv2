@@ -508,9 +508,9 @@ void closeElimAuton() {
     wings.retFrontWings();
 
     driveMode = 2;
-    setTargetPos(5*24+6, 1*24-6);
+    setTargetPos(5*24+3, 6);
     maxMoveSpeed = 300;
-    untilTargetPos(5, 2000);
+    untilTargetPos(10, 2000);
     
     driveDisabled = true;
     driveMode = 0;
@@ -557,7 +557,7 @@ botMove(-3,400);
 
 }
 void closeElimAuton2() {
-    double start = pros::millis();
+   double start = pros::millis();
     driveDisabled = false;
     drive.stop();
     drive.hold();
@@ -588,7 +588,7 @@ void closeElimAuton2() {
     driveDisabled = false;
     // maxMoveSpeed = 300;
     // untilTargetPos(10, 2000, true);
-    botMove(-fabs((3*24+16-xPos)/cos(headingError(-90))), 300);
+    botMove(-fabs((3*24+16-xPos)), 300);
 
     setTargetPos(xPos, yPos+200);
     maxMoveSpeed = 0;
@@ -657,14 +657,14 @@ void closeElimAuton2() {
 
 
     driveMode = 2;
-    setTargetPos(5*24+5,12+8);
+    setTargetPos(5*24-10,12);
     maxMoveSpeed = 450;
-    untilTargetPos(10, 1500, true);
+    untilTargetPos(25, 1500, true);
     wings.extBRWing();
     
     driveDisabled = true;
     driveMode = 0;
-    maxMoveSpeed = 450;
+    maxMoveSpeed = 0;
     print_task.suspend(); 
     drive.stop();
     pros::delay(500);
