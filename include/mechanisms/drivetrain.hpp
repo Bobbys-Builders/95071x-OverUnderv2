@@ -23,12 +23,29 @@ public:
 
     // constructor
     Drivetrain (int FL_PORT, int ML_PORT, int BL_PORT, int FR_PORT, int MR_PORT, int BR_PORT, int IMU_PORT, int VODOM_PORT, int HODOM_PORT, int EXP_PORT, char ODOM_PORT) : 
-    FLMotor(FL_PORT, MOTOR_GEARSET_06, false), MLMotor(ML_PORT, MOTOR_GEARSET_06, false), BLMotor(BL_PORT, MOTOR_GEARSET_06, true), 
-    FRMotor(FR_PORT, MOTOR_GEARSET_06, true), MRMotor(MR_PORT, MOTOR_GEARSET_06, true), BRMotor(BR_PORT, MOTOR_GEARSET_06, false), 
-    imu(IMU_PORT), vOdom(VODOM_PORT, true), hOdom(HODOM_PORT, false), odomPiston(ODOM_PORT)
+    FLMotor(FL_PORT, MOTOR_GEARSET_06, false), MLMotor(ML_PORT, MOTOR_GEARSET_06, false), BLMotor(BL_PORT, MOTOR_GEARSET_06, false), 
+    FRMotor(FR_PORT, MOTOR_GEARSET_06, true), MRMotor(MR_PORT, MOTOR_GEARSET_06, true), BRMotor(BR_PORT, MOTOR_GEARSET_06, true), 
+    imu(IMU_PORT), vOdom(VODOM_PORT, true), hOdom(HODOM_PORT, true), odomPiston(ODOM_PORT)
     {
+        // FLMotor.set_voltage_limit(12000);
+        // FLMotor.set_current_limit(2500);
+        // MLMotor.set_voltage_limit(12000);
+        // MLMotor.set_current_limit(2500);
+        // BLMotor.set_voltage_limit(12000);
+        // BLMotor.set_current_limit(2500);
+        // FRMotor.set_voltage_limit(12000);
+        // FRMotor.set_current_limit(2500);
+        // MRMotor.set_voltage_limit(12000);
+        // MRMotor.set_current_limit(2500);
+        // BRMotor.set_voltage_limit(12000);
+        // BRMotor.set_current_limit(2500);
         vOdom.reset_position();
         hOdom.reset_position();
+    }
+
+    double sign(double input) {
+        if (input == 0) return 1;
+        return fabs(input) / input;
     }
 
     // telemetry
@@ -56,11 +73,11 @@ public:
     }
     
     double getPositionLeft() {
-        return (FLMotor.get_position() + MLMotor.get_position() + BLMotor.get_position()) / 3;
+        return -(FLMotor.get_position() + MLMotor.get_position() + BLMotor.get_position()) / 3;
     }
 
     double getPositionRight() {
-        return (FRMotor.get_position() + MRMotor.get_position() + BRMotor.get_position()) / 3;
+        return -(FRMotor.get_position() + MRMotor.get_position() + BRMotor.get_position()) / 3;
     }
 
     // int getVelocityLeft() {
@@ -85,50 +102,52 @@ public:
     void moveVelocityLeft(double velocity) {
         velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
 
-        FLMotor.move_velocity(velocity);
-        MLMotor.move_velocity(velocity);
-        BLMotor.move_velocity(velocity);
+        FLMotor.move_velocity(-velocity);
+        MLMotor.move_velocity(-velocity);
+        BLMotor.move_velocity(-velocity);
     }
 
     // moves the right motors using velocity
     void moveVelocityRight(double velocity) {
         velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
 
-        FRMotor.move_velocity(velocity);
-        MRMotor.move_velocity(velocity);
-        BRMotor.move_velocity(velocity);
+        FRMotor.move_velocity(-velocity);
+        MRMotor.move_velocity(-velocity);
+        BRMotor.move_velocity(-velocity);
     }
 
     void moveVoltageLeft(int voltage) {
         voltage = fmin(fmax(voltage, -12000), 12000); // limits voltage to max/min
+        voltage += 1200*sign(voltage);
 
-        FLMotor.move_voltage(voltage);
-        MLMotor.move_voltage(voltage);
-        BLMotor.move_voltage(voltage);
+        FLMotor.move_voltage(-voltage);
+        MLMotor.move_voltage(-voltage);
+        BLMotor.move_voltage(-voltage);
     }
 
     void moveVoltageRight(int voltage) {
         voltage = fmin(fmax(voltage, -12000), 12000); // limits voltage to max/min
+        voltage += 1200*sign(voltage);
 
-        FRMotor.move_voltage(voltage);
-        MRMotor.move_voltage(voltage);
-        BRMotor.move_voltage(voltage);
+        FRMotor.move_voltage(-voltage);
+        MRMotor.move_voltage(-voltage);
+        BRMotor.move_voltage(-voltage);
     }
 
     void moveRelativeLeft(int ticks, double velocity) {
         velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
 
-        FLMotor.move_relative(ticks, velocity);
-        MLMotor.move_relative(ticks, velocity);
-        BLMotor.move_relative(ticks, velocity);
+        FLMotor.move_relative(-ticks, velocity);
+        MLMotor.move_relative(-ticks, velocity);
+        BLMotor.move_relative(-ticks, velocity);
     }
 
     void moveRelativeRight(int ticks, double velocity) {
         velocity = fmin(fmax(velocity, -600), 600); // limits velocity to max/min
 
-        FRMotor.move_relative(ticks, velocity);
-        MRMotor.move_relative(ticks, velocity);
-        BRMotor.move_relative(ticks, velocity);
+        FRMotor.move_relative(-ticks, velocity);
+        MRMotor.move_relative(-ticks, velocity);
+        BRMotor.move_relative(-ticks, velocity);
     }
 
     // moves the right motors using velocity + PID

@@ -13,41 +13,29 @@ void testAuton() {
     drive.hold();
     drive.imu.set_heading(0);
     setPos(0, 0);
-    arcMovement = false;
+    boomerAng = false;
     driveDisabled = false;
     driveMode = 1;
+    maxTurnSpeed = 600;
 
-    // move(6, movePID, turnPID, 0, 250);
-    // swerve(90, turnPID, 0, 250);
-    // swerve(180, turnPID, 0, 250);
-    // driveMode = 2;
-    // swerve(90, turnPID, 0, 250);
-    // driveMode = 1;
-    
+    // setTargetPos(24, 48, 90);
+    // boomerAng = true;
+    // maxMoveSpeed = 600;
     // maxTurnSpeed = 600;
-    // turn(90, turnPID, 0);
-    driveDisabled = true;
-    drive.moveVelocityLeft(-200);
-    drive.moveVelocityRight(-200);
-    if (!untilTargetPos(-1, 5000, true)) botMove(15, 200);
-    pros::delay(500);
-    drive.coast();
-    // move(24, movePID, turnPID, 0, 250);
-    // driveMode = 2;
-    // swerve(90, turnPID, 0, 250);
-    // driveMode = 1;
-    // swerve(180, turnPID, 0, 250);
-    // driveMode = 0;
-    // swerve(0.0, 0.0, turnPID, 0, 250);
-    // move(positionError(0, 0), movePID, turnPID, 0, 250);
-    // turn(0, turnPID, 0, 250);
+    // untilTargetPos(3, 2000);
+    // pros::delay(1000);
+    turn(10, turnPID, 0, 5000);
+    // driveDisabled = true;
+    // maxMoveSpeed = 600;
+    // move(24, movePID, turnPID, 0, 5000);
+
     driveDisabled = true;
     driveMode = 0;
     maxMoveSpeed = 450;
     print_task.suspend(); 
     drive.stop();
     pros::delay(500);
-    controller.print(0, 0, "%.0f                             ", (pros::millis() - start));
+    controller.print(0, 0, "%.0f                             ", (pros::millis() - start-500));
     pros::delay(500);
     controller.print(1, 0, "X:%.1f Y:%.1f H:%.1f          ", xPos, yPos, drive.imu.get_heading());
     pros::delay(4000);
@@ -120,7 +108,7 @@ void closePreauton() {
     // maxTurnConstant = 20;
     drive.imu.set_heading(0);
     driveDisabled = false;
-    setPos(5*24+6, 1*24+7.5);
+    setPos(5*24+6, 1*24+7);
 
     // driveMode = 1;
     // setTargetPos(5*24+10, 1*24+12);
@@ -800,7 +788,7 @@ void farPreauton() {
     // maxTurnConstant = 20;
     drive.imu.set_heading(180);
     driveDisabled = false;
-    setPos(5*24+6, 5*24-7.5);
+    setPos(5*24+6, 5*24-7);
 
     // driveMode = 1;
     // setTargetPos(5*24+12, 5*24-6);
@@ -1106,7 +1094,7 @@ void farElim6Preauton() {
     // maxTurnConstant = 20;
     drive.imu.set_heading(180);
     driveDisabled = false;
-    setPos(5*24+6, 5*24-7.5);
+    setPos(5*24+6, 5*24-7);
 
     botMove(-3, 200);
     driveMode = 1;
@@ -1439,7 +1427,7 @@ void skillsPreauton() {
     drive.hold();
     drive.imu.set_heading(0);
     driveDisabled = false;
-    setPos(5*24+6, 1*24+7.5);
+    setPos(5*24+6, 1*24+7);
 
     // driveMode = 2;
     // swerve(109.7, 11, turnPID, 0, 500);
@@ -1716,7 +1704,6 @@ void skillsAuton() {
     // setTargetPos(xPos+200, yPos+125);
     // maxMoveSpeed = 0;
     // untilTargetH(10, 2000);
-    arcMovement = true;
     wings.extBackWings();
     setTargetPos(2*24+12, 5*24+6); // push 2
     maxMoveSpeed = 600;
@@ -1725,7 +1712,6 @@ void skillsAuton() {
         timer -= 10;
         pros::delay(10);
     }
-    arcMovement = false;
     driveDisabled = true;
     drive.moveVelocityLeft(-600);
     drive.moveVelocityRight(-600);
@@ -1791,7 +1777,6 @@ void skillsAuton() {
     maxMoveSpeed = 0;
     untilTargetH(10, 1000);
     wings.extBackWings();
-    arcMovement = true;
     setChainPos(3*24+8-4,5*24-6); // push 3
     maxMoveSpeed = 600;
     timer = 1500;
@@ -1799,7 +1784,6 @@ void skillsAuton() {
         timer -= 10;
         pros::delay(10);
     }
-    arcMovement = false;
     driveDisabled = true;
     drive.moveVelocityLeft(-600);
     drive.moveVelocityRight(-600);

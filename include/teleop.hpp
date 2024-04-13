@@ -70,8 +70,10 @@ void moveClimb() {
         climbUp = !climbUp;
         if (climbUp) {
             climb.climbUp();
+			climb.PTODisengage();
         } else {
             climb.climbDown();
+			climb.PTOEngage();
         }
     }
 }
@@ -123,8 +125,12 @@ void moveDrive() {
 	double turn = turn2;
 	double power = power1;
 
-	leftVelocity = (0.925 * power1 + 0.95 * turn2) * 600 / 127;
-	rightVelocity = (0.925 * power1 - 0.95 * turn2) * 600 / 127;
+	leftVelocity = (1 * power1 + 1 * turn2) * 600 / 127;
+	rightVelocity = (1 * power1 - 1 * turn2) * 600 / 127;
+	if (climbUp) {
+		leftVelocity = (0.9 * power1 + 0.75 * turn2) * 600 / 127;
+		rightVelocity = (0.9 * power1 - 0.75 * turn2) * 600 / 127;
+	}
   
 	if (controller.get_digital(DIGITAL_X) && !XMode) holdDrive = !holdDrive;
 	if (holdDrive) drive.hold();
@@ -137,6 +143,9 @@ void moveDrive() {
 void moveTankDrive() {
 	double powerLeft = controller.get_analog(ANALOG_LEFT_Y);
 	double powerRight = controller.get_analog(ANALOG_RIGHT_Y);
+	double p = 1; // constants
+	powerLeft = (pow(M_E, -p/10) + pow(M_E, (fabs(powerLeft)-127)/10) * (1-pow(M_E, -p/10))) * powerLeft;
+	powerRight = (pow(M_E, -p/10) + pow(M_E, (fabs(powerRight)-127)/10) * (1-pow(M_E, -p/10))) * powerRight; 
 	drive.moveVelocityLeft(powerLeft * 600/127);
 	drive.moveVelocityRight(powerRight * 600/127);
 }

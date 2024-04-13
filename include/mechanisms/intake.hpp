@@ -5,30 +5,32 @@
 
 class Intake {
 public:
-    pros::Motor INTMotor;
+    pros::Motor INTLMotor;
+    pros::Motor INTRMotor;
 
     // constructor
-    Intake (int INT_PORT) : 
-    INTMotor(INT_PORT, MOTOR_GEAR_200, false)
+    Intake (int INTL_PORT, int INTR_PORT) : 
+    INTLMotor(INTL_PORT, MOTOR_GEAR_200, true), INTRMotor(INTR_PORT, MOTOR_GEAR_200, false)
     {
         // INTMotor.set_voltage_limit(600);
     }
 
     // telemetry
 
-    double getTemp() {
-        return INTMotor.get_temperature();
+    double getTemperature() {
+        return (INTLMotor.get_temperature()+INTRMotor.get_temperature())/2;
     }
 
     int getRealVelocity() {
-        return INTMotor.get_actual_velocity();
+        return (INTLMotor.get_actual_velocity()+INTRMotor.get_actual_velocity())/2;
     }
 
     // control
     void moveVelocity(double velocity) {
-        velocity = fmin(fmax(velocity, -200), 200);
+        velocity = fmin(fmax(velocity, -600), 600);
 
-        INTMotor.move_velocity(velocity);
+        INTLMotor.move_velocity(velocity);
+        INTRMotor.move_velocity(velocity);
     }
 
     // void updateVelocity() {

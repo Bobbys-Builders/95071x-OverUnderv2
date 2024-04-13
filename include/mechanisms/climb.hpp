@@ -5,23 +5,29 @@
 
 class Climb {
 public:
-    pros::ADIDigitalOut CLMUPiston;
-    pros::ADIDigitalOut CLMDPiston;
+    pros::ADIDigitalOut CLMPiston;
+    pros::ADIDigitalOut PTOPiston;
 
     // constructor
-    Climb (int EXP_PORT, char CLMU_PORT, char CLMD_PORT) : 
-    CLMUPiston(CLMU_PORT, false), CLMDPiston(CLMD_PORT, false)
+    Climb (int EXP_PORT, char CLM_PORT, char PTO_PORT) : 
+    CLMPiston(CLM_PORT, false), PTOPiston(PTO_PORT, false)
     {}
 
     // control
     void climbUp() {
-        // CLMDPiston.set_value(true);
-        CLMUPiston.set_value(true);
+        CLMPiston.set_value(true);
     }
 
     void climbDown() {
-        CLMDPiston.set_value(true);
-        CLMUPiston.set_value(false);
+        CLMPiston.set_value(false);
+    }
+
+    void PTOEngage() {
+        PTOPiston.set_value(true);
+    }
+
+    void PTODisengage() {
+        PTOPiston.set_value(false);
     }
 };
 

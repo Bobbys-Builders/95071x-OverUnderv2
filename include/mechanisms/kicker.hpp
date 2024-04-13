@@ -17,10 +17,9 @@ public:
     Kicker (int KCKL_PORT, int KCKR_PORT, int KCKROT_PORT) : 
     KCKLMotor(KCKL_PORT, MOTOR_GEAR_200, false), KCKRMotor(KCKR_PORT, MOTOR_GEAR_200, true), KCKRotation(KCKROT_PORT, true)
     {
-        // KCKLMotor.set_voltage_limit(600);
+        KCKLMotor.set_voltage_limit(12000);
+        KCKLMotor.set_current_limit(2500);
         KCKRotation.reset();
-        KCKLMotor.set_brake_mode(MOTOR_BRAKE_COAST);
-        KCKRMotor.set_brake_mode(MOTOR_BRAKE_COAST);
     }
 
     // telemetry
