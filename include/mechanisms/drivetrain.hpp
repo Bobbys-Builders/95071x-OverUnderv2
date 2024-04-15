@@ -44,7 +44,7 @@ public:
     }
 
     double sign(double input) {
-        if (input == 0) return 1;
+        if (input == 0) return 0;
         return fabs(input) / input;
     }
 
@@ -118,7 +118,7 @@ public:
 
     void moveVoltageLeft(int voltage) {
         voltage = fmin(fmax(voltage, -12000), 12000); // limits voltage to max/min
-        voltage += 1200*sign(voltage);
+        // voltage += 1200*sign(voltage);
 
         FLMotor.move_voltage(-voltage);
         MLMotor.move_voltage(-voltage);
@@ -127,7 +127,7 @@ public:
 
     void moveVoltageRight(int voltage) {
         voltage = fmin(fmax(voltage, -12000), 12000); // limits voltage to max/min
-        voltage += 1200*sign(voltage);
+        // voltage += 1200*sign(voltage);
 
         FRMotor.move_voltage(-voltage);
         MRMotor.move_voltage(-voltage);

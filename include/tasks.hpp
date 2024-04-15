@@ -372,27 +372,35 @@ void driveAutoTask() {
       power = odomMPID.calculateOut();
     } else { // boomerAng
       // calculate the carrot point
-      double carrotX = targetX - cos(targetH) * 0.6 * positionError(targetX, targetY);
-      double carrotY = targetY - sin(targetH) * 0.6 * positionError(targetX, targetY);
+      chainX = targetX - cos(targetH) * 0.1 * positionError(targetX, targetY)*positionError(targetX, targetY)/12;
+      chainY = targetY - sin(targetH) * 0.1 * positionError(targetX, targetY)*positionError(targetX, targetY)/12;
       if (close) { // settling behavior
-        carrotX = targetX;
-        carrotY = targetY;
+        chainX = targetX;
+        chainY = targetY;
       }
 
       // calculate error
       if (close) {
-        if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) odomTPID.update(headingError((M_PI/2-targetH)/RADIANS_DEGREE));
+        if ((fabs(headingError(targetX, targetY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) odomTPID.update(headingError((M_PI/2-targetH)/RADIANS_DEGREE));
         else odomTPID.update(headingError((M_PI/2-targetH)/RADIANS_DEGREE) + 180);
       } else {
-        if ((fabs(headingError(carrotX, carrotY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) odomTPID.update(headingError(carrotX, carrotY));
-        else odomTPID.update(headingError(heading(carrotX, carrotY) + 180));
+        if ((fabs(headingError(chainX, chainY)) <= 90 && !(driveMode == 2)) || (driveMode == 1)) odomTPID.update(headingError(chainX, chainY));
+        else odomTPID.update(headingError(heading(chainX, chainY) + 180));
       }
       turn = odomTPID.calculateOut();
-      odomMPID.update(positionError(carrotX, carrotY));
-      if (close) odomMPID.update(positionError(carrotX, carrotY) * cos(headingError(carrotX, carrotY) * RADIANS_DEGREE));
-      else odomMPID.update(positionError(carrotX, carrotY) * sign(cos(headingError(carrotX, carrotY) * RADIANS_DEGREE)));
+      odomMPID.update(positionError(chainX, chainY));
+      if (close) odomMPID.update(positionError(chainX, chainY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
+      else odomMPID.update(positionError(chainX, chainY) * sign(cos(headingError(chainX, chainY) * RADIANS_DEGREE)));
       power = odomMPID.calculateOut();
     }
+
+    double radius = fabs(positionError(chainX, chainY)/2 / sin(headingError(chainX, chainY) * RADIANS_DEGREE));
+    double maxSlipSpeed = (sqrt(0.19778781931 * radius*9.81*39.3701))*60/(3.25*M_PI)*600/450;
+    // double maxSlipSpeed = (sqrt(4000 * radius));
+    power = fmin(fmax(power, -maxSlipSpeed), maxSlipSpeed);
+    // prioritize angular movement over lateral movement
+    // double overturn = fabs(turn) + fabs(power) - maxMotorSpeed;
+    // if (overturn > 0) power -= (power > 0 ? overturn : -overturn);
 
     double leftVelocity = power + turn;
     double rightVelocity = power - turn;
@@ -402,8 +410,8 @@ void driveAutoTask() {
       rightVelocity /= ratio;
     }
     if (!driveDisabled) {
-      drive.moveVelocityLeft(leftVelocity);
-      drive.moveVelocityRight(rightVelocity);
+      drive.moveVoltageLeft(leftVelocity*20);
+      drive.moveVoltageRight(rightVelocity*20);
     }
 
     pros::delay(10);
@@ -590,8 +598,8 @@ bool swerve(double tX, double tY, Pid tPID = swervePID, int timeout = 0, double 
       tPID.update(headingError(heading(tX, tY) + 180));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVelocityLeft(mOut + tPID.calculateOut());
-    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
     pros::delay(10);
     timeout -= 10;
   }
@@ -604,8 +612,8 @@ bool swerve(double tX, double tY, Pid tPID = swervePID, int timeout = 0, double 
       tPID.update(headingError(heading(tX, tY) + 180));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVelocityLeft(mOut + tPID.calculateOut());
-    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
     pros::delay(10);
     extraTime -= 10;
   }
@@ -631,8 +639,8 @@ bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTi
       tPID.update(headingError(target));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVelocityLeft(mOut + tPID.calculateOut());
-    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
     pros::delay(10);
     timeout -= 10;
   }
@@ -645,8 +653,8 @@ bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTi
       tPID.update(headingError(target));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVelocityLeft(mOut + tPID.calculateOut());
-    drive.moveVelocityRight(mOut - tPID.calculateOut());
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
     pros::delay(10);
     extraTime -= 10;
   }

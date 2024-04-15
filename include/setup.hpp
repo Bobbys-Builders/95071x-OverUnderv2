@@ -68,7 +68,7 @@ Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
 // Pid movePID(0, 17, 0.01, 30, 200000, 600, 0);
 // Pid turnPID(0, 2, 0.0005, 2, 10000, 600, 0); // using velocity
 
-Pid movePID(0, 17, 0.00, 00, 200000, 600, 0);
+Pid movePID(0, 30, 0.001, 15, 2000, 600, 0);
 Pid turnPID(0, 10, 0.05, 100, 1500, 600, 0); // using voltage
 
 Pid turnPID2(0, 3, 0.000, 0.5, 10000, 600, 0); // small(<30)
