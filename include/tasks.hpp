@@ -365,15 +365,15 @@ void driveAutoTask() {
       else odomTPID.update(headingError(heading(chainX, chainY) + 180));
 
       turn = odomTPID.calculateOut();
-      odomMPID.update(positionError(targetX, targetY));
-      // if (close) odomMPID.update(positionError(chainX, chainY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
-      // else odomMPID.update(positionError(chainX, chainY) * sign(cos(headingError(chainX, chainY) * RADIANS_DEGREE)));
-      odomMPID.update(positionError(chainX, chainY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
+      // odomMPID.update(positionError(targetX, targetY));
+      if (close) odomMPID.update(positionError(chainX, chainY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
+      else odomMPID.update(positionError(chainX, chainY) * sign(cos(headingError(chainX, chainY) * RADIANS_DEGREE)));
+      // odomMPID.update(positionError(chainX, chainY) * cos(headingError(chainX, chainY) * RADIANS_DEGREE));
       power = odomMPID.calculateOut();
     } else { // boomerAng
       // calculate the carrot point
-      chainX = targetX - cos(targetH) * 0.1 * positionError(targetX, targetY)*positionError(targetX, targetY)/12;
-      chainY = targetY - sin(targetH) * 0.1 * positionError(targetX, targetY)*positionError(targetX, targetY)/12;
+      chainX = targetX - cos(targetH) * 0.6 * fmax(positionError(targetX, targetY)-7.5, 0);
+      chainY = targetY - sin(targetH) * 0.6 * fmax(positionError(targetX, targetY)-7.5, 0);
       if (close) { // settling behavior
         chainX = targetX;
         chainY = targetY;
@@ -682,7 +682,7 @@ bool untilTargetPos(double tolerance, int timeout = 0, bool antiStall = false, i
   int time = 0;
   int stalledStates = 0;
   while (positionError(tX, tY) > tolerance && time < timeout) {
-    if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02993239667 && time > 500) stalledStates++;
+    if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 && time > 500) stalledStates++;
     else stalledStates = 0;
     if (stalledStates > stallStates && antiStall) return false;
     time += 10;
