@@ -333,7 +333,7 @@ double targetY = 0;
 double targetH = 0;
 double chainX = 0;
 double chainY = 0;
-void setTargetPos(double x, double y, double h = 0) {
+void setTargetPos(double x, double y, double h = targetH) {
   targetX = x;
   targetY = y;
   targetH = M_PI/2-h*RADIANS_DEGREE;
@@ -598,8 +598,8 @@ bool swerve(double tX, double tY, Pid tPID = swervePID, int timeout = 0, double 
       tPID.update(headingError(heading(tX, tY) + 180));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
-    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20/2);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20/2);
     pros::delay(10);
     timeout -= 10;
   }
@@ -612,8 +612,8 @@ bool swerve(double tX, double tY, Pid tPID = swervePID, int timeout = 0, double 
       tPID.update(headingError(heading(tX, tY) + 180));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
-    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20/2);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20/2);
     pros::delay(10);
     extraTime -= 10;
   }
@@ -639,8 +639,8 @@ bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTi
       tPID.update(headingError(target));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
-    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20/2);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20/2);
     pros::delay(10);
     timeout -= 10;
   }
@@ -653,8 +653,8 @@ bool swerve(double target, Pid tPID = swervePID, int timeout = 0, double extraTi
       tPID.update(headingError(target));
       mOut = -fabs(tPID.calculateOut());
     }
-    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20);
-    drive.moveVoltageRight((mOut - tPID.calculateOut())*20);
+    drive.moveVoltageLeft((mOut + tPID.calculateOut())*20/2);
+    drive.moveVoltageRight((mOut - tPID.calculateOut())*20/2);
     pros::delay(10);
     extraTime -= 10;
   }
@@ -682,7 +682,7 @@ bool untilTargetPos(double tolerance, int timeout = 0, bool antiStall = false, i
   int time = 0;
   int stalledStates = 0;
   while (positionError(tX, tY) > tolerance && time < timeout) {
-    if (sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 && time > 500) stalledStates++;
+    if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || fabs(drive.imu.get_roll()) > 15) && time > 500) stalledStates++;
     else stalledStates = 0;
     if (stalledStates > stallStates && antiStall) return false;
     time += 10;
