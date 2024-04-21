@@ -7,10 +7,11 @@ class Intake {
 public:
     pros::Motor INTLMotor;
     pros::Motor INTRMotor;
+    pros::Optical INTOptical;
 
     // constructor
-    Intake (int INTL_PORT, int INTR_PORT) : 
-    INTLMotor(INTL_PORT, MOTOR_GEAR_200, true), INTRMotor(INTR_PORT, MOTOR_GEAR_200, false)
+    Intake (int INTL_PORT, int INTR_PORT, int INTOPT_PORT) : 
+    INTLMotor(INTL_PORT, MOTOR_GEAR_200, true), INTRMotor(INTR_PORT, MOTOR_GEAR_200, false), INTOptical(INTOPT_PORT)
     {
         // INTMotor.set_voltage_limit(600);
     }
@@ -23,6 +24,10 @@ public:
 
     int getRealVelocity() {
         return (INTLMotor.get_actual_velocity()+INTRMotor.get_actual_velocity())/2;
+    }
+
+    bool hasTriball() {
+        return (INTOptical.get_proximity() > 50) && INTOptical.get_proximity() != 0;
     }
 
     // control

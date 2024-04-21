@@ -69,7 +69,8 @@ void getMaxTemperature() {
 }
 
 void getIntakeSpeed() {
-	controller.print(2, 0, "INT%.1f rpm                         ", intake.getRealVelocity());
+	// controller.print(2, 0, "INT%.1f rpm                         ", intake.getRealVelocity());
+	controller.print(2, 0, "INT%.d rpm                         ", intake.INTOptical.get_proximity());
 }
 
 // void getAuton() {
@@ -98,7 +99,7 @@ void printTask() {
 		}
 		if (printNum == 2) {
 			// getKCKSpeed();
-			getPosition();
+			getIntakeSpeed();
 		}
 		
 		pros::delay(100);

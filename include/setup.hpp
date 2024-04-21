@@ -35,6 +35,7 @@ const int HODOM_PORT = 3;
 
 const int INTL_PORT = 17; // intake
 const int INTR_PORT = 13;
+const int INTOPT_PORT = 14;
 
 const int KCKL_PORT = 9; // kicker
 const int KCKR_PORT = 4;
@@ -59,7 +60,7 @@ pros::Controller controller(CONTROLLER_MASTER);
 
 // mechanisms
 Drivetrain drive(FL_PORT, ML_PORT, BL_PORT, FR_PORT, MR_PORT, BR_PORT, IMU_PORT, VODOM_PORT, HODOM_PORT, EXP_PORT, ODOM_PORT);
-Intake intake(INTL_PORT, INTR_PORT);
+Intake intake(INTL_PORT, INTR_PORT, INTOPT_PORT);
 Kicker kicker(KCKL_PORT, KCKR_PORT, KCKROT_PORT);
 Climb climb(EXP_PORT, CLM_PORT, PTO_PORT);
 Wings wings(EXP_PORT, FLP_PORT, FRP_PORT, BLP_PORT, BRP_PORT);
