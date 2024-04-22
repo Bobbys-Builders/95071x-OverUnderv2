@@ -121,16 +121,16 @@ void moveDrive() {
 	double t = 4.5;
 	power1 = (pow(M_E, -p/10) + pow(M_E, (fabs(power1)-127)/10) * (1-pow(M_E, -p/10))) * power1; // just the pilons drive curves
 	turn2 = (pow(M_E, -t/10) + pow(M_E, (fabs(turn2)-127)/10) * (1-pow(M_E, -t/10))) * turn2; 
+	if (climbUp) {
+		power1 = (pow(M_E, -3/10) + pow(M_E, (fabs(power1)-127)/10) * (1-pow(M_E, -3/10))) * power1; // less sensitivity for this
+		turn2 = (pow(M_E, -10/10) + pow(M_E, (fabs(turn2)-127)/10) * (1-pow(M_E, -10/10))) * turn2; 
+	}
 
 	double turn = turn2;
 	double power = power1;
 
-	leftVelocity = (1 * power1 + 1 * turn2) * 600 / 127;
-	rightVelocity = (1 * power1 - 1 * turn2) * 600 / 127;
-	if (climbUp) {
-		leftVelocity = (0.9 * power1 + 0.75 * turn2) * 600 / 127;
-		rightVelocity = (0.9 * power1 - 0.75 * turn2) * 600 / 127;
-	}
+	leftVelocity = (1 * power1 + 0.9 * turn2) * 600 / 127;
+	rightVelocity = (1 * power1 - 0.9 * turn2) * 600 / 127;
   
 	if (controller.get_digital(DIGITAL_X) && !XMode) holdDrive = !holdDrive;
 	if (holdDrive) drive.hold();

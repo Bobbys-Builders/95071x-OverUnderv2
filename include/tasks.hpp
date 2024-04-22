@@ -322,6 +322,7 @@ void driveOdometryTask() {
 */
 
 double maxMoveSpeed = 600;
+double minMoveSpeed = 0;
 double maxTurnSpeed = 600;
 double maxMotorSpeed = 600;
 bool driveDisabled = true;
@@ -356,6 +357,7 @@ void driveAutoTask() {
   while (true) {
     double power, turn;
     odomMPID.maxLim = maxMoveSpeed;
+    odomMPID.minLim = minMoveSpeed;
     odomTPID.maxLim = maxTurnSpeed;
     // halve speed when close to target
     if (positionError(targetX, targetY) < 7.5) close = true;

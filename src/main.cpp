@@ -124,7 +124,7 @@ void autonomous() {
 		break;
 
 		case 7:
-		farElim6Auton2();
+		farElim6Auton();
 		break;
 
 		case 8:
@@ -209,7 +209,7 @@ void opcontrol() {
 						break;
 
 						case 7:
-						farElim6Auton2();
+						farElim6Auton();
 						break;
 
 						case 8:

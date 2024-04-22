@@ -1169,14 +1169,17 @@ void farElim6Auton2() {
     boomerAng = true;
     setTargetPos(3*24+12, 5*24+3, 0);
     maxMoveSpeed = 0;
-    untilTargetH(5, 2000, true);
+    untilTargetH(10, 2000, true);
     intake.moveVelocity(-200);
     wings.extFLWing();
-    driveDisabled = true;
-    drive.moveVelocityLeft(600);
-    drive.moveVelocityRight(600);
+    maxMoveSpeed = 600;
+    minMoveSpeed = 600;
+    // driveDisabled = true;
+    // drive.moveVelocityLeft(600);
+    // drive.moveVelocityRight(600);
     untilTargetPos(-1, 1500, true, 5);
-    driveDisabled = false;
+    minMoveSpeed = 0;
+    // driveDisabled = false;
     // maxMoveSpeed = 600;
     // untilTargetPos(3, 1500, true, 5, targetX, targetY);
     wings.retFLWing();
@@ -1242,7 +1245,7 @@ void farElim6Auton2() {
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, true);
 
-    pros::delay(fmax(0, 10000+start-pros::millis()));
+    // pros::delay(fmax(0, 10000+start-pros::millis()));
 
     driveDisabled = true; // cross barrier(sus)
     while (drive.imu.get_roll() < 15) {
@@ -1260,19 +1263,21 @@ void farElim6Auton2() {
     driveDisabled = false;
     
     driveMode = 1; // alley
-    setTargetPos(xPos, yPos+45);
+    setTargetPos(xPos, yPos+50);
     maxMoveSpeed = 450;
     if (!untilTargetH(30, 500, true)) driveMode = 0;
     maxMoveSpeed = 600;
     untilTargetPos(20, 2000, true);
     driveMode = 1;
     boomerAng = true;
-    setTargetPos(xPos-40, yPos+30, 300);
+    wings.extFLWing();
+    setTargetPos(xPos-40, yPos+40, 300);
     maxMoveSpeed = 600;
     untilTargetPos(30, 2500, true, 5, targetX, targetY);
-    intake.moveVelocity(-100);
-    wings.extFLWing();
+    intake.moveVelocity(-200);
+    minMoveSpeed = 600;
     untilTargetPos(3, 2500, true, 2, targetX, targetY);
+    minMoveSpeed = 0;
 
     botMove(-10, 450); // back up and spin around
     intake.moveVelocity(0);
@@ -1447,167 +1452,200 @@ double start = pros::millis();
 void farElim6Auton() {
     double start = pros::millis();
     driveDisabled = false;
+    boomerAng = false;
     drive.stop();
     drive.hold();
-
-    // intake.moveVelocity(-200); // deploy intake
-    // driveMode = 1;
-    // wings.extFrontWings(); // launch alliance triball
-    // setTargetPos(3*24+4, 4*24+2); // rush triball 1
-    // setChainPos(4*24-4, 4*24+3);
-    // // setChainPos(3*24+4, 4*24+2);
-    // maxMoveSpeed = 600;
-    // untilTargetPos(25, 2000);
-    // wings.retFrontWings();
-    // untilTargetPos(15, 2000);
-    // intake.moveVelocity(200);
-    // // untilTargetPos(50, 2000);
-    // // wings.retFrontWings();
-    // // untilTargetPos(35, 2000);
-    // // intake.moveVelocity(200);
-    // setChainPos(3*24+2, 4*24+1);
-    // maxMoveSpeed = 600;
-    // untilTargetPos(8, 2000);
-
-    intake.moveVelocity(-200); 
-    wings.extFrontWings();
-    driveMode = 1;
-    setTargetPos(3*24+6,3*24+8);
-    // setChainPos(4*24-4,4*24);
-    setChainPos(4*24+12,4*24);
     maxMoveSpeed = 600;
-    untilTargetPos(25,2000);
-    wings.retFrontWings();
+    maxTurnSpeed = 600;
+
+    driveMode = 2; // rush center
+    wings.extFLWing();
+    setTargetPos(3*24+10, 4*24+7, 224);
+    setTargetPos(4*24-6, 4*24-2);
     intake.moveVelocity(200);
-    setChainPos(3*24+6,3*24+8);
-    maxMoveSpeed = 450;
-    untilTargetPos(8,2000);
-    botMove(-5, 200);
-    driveMode = 2;
-    setTargetPos(5*24+12,4*24+12); // come back
-    setChainPos(4*24+12,4*24+12);
-    maxMoveSpeed = 0;
-    untilTargetH(15, 2000, 0, true);
-    maxMoveSpeed = 450;
-    untilTargetPos(15,2000);
-    setChainPos(5*24+12,4*24+16);
-    maxMoveSpeed = 450;
-    untilTargetPos(10,2000);
-    maxMoveSpeed = 0;
-    // intake.moveVelocity(-200);
-
-    // driveMode = 2; // come back
-    // setTargetPos(5*24+12, 4*24+16);
-    // setChainPos(4*24+16, 4*24+12);
-    // maxMoveSpeed = 0;
-    // untilTargetH(15, 2000);
-    // maxMoveSpeed = 450;
-    // untilTargetPos(15, 2000);
-    // setChainPos(5*24+12, 4*24+12);
-    // maxMoveSpeed = 600;
-    // untilTargetPos(5, 2000);
-
-    driveMode = 2; // deposit triball
-    setTargetPos(5*24+16, 3*24+20);
-    maxMoveSpeed = 0;
-    untilTargetH(30, 2000);
-    intake.moveVelocity(-200);
-    untilTargetH(15, 1000);
-    maxMoveSpeed = 450;
-    untilTargetPos(5, 2000);
-    driveDisabled = true;
-    drive.moveVelocityLeft(-600);
-    drive.moveVelocityRight(600);
-    pros::delay(250);
-    driveDisabled = false;
-    intake.moveVelocity(200);
-    driveMode = 1;
-    setTargetPos(5*24+12, 3*24);
-    maxMoveSpeed = 0;
-    untilTargetH(10, 1000);
-
-    botMove(yPos-3*24 - 8, 450); // intake triball 2
+    maxMoveSpeed = 600;
+    untilTargetPos(24, 2000);
+    wings.retFLWing();
+    untilTargetPos(10, 2000); // knock ball 1
     wings.extBRWing();
+    // boomerAng = true;
+    // setTargetPos(3*24+10, 4*24+7, 224);
+    // untilTargetPos(5, 1500, true, 5, targetX, targetY);
+    // wings.retBRWing();
 
-    driveMode = 2; // move to goal, score alliance triball and triball 1+3
-    setTargetPos(4*24, 5*24+16);
-    setChainPos(5*24+12, 4*24+4);
-    maxMoveSpeed = 600;
-    untilTargetPos(15, 1000);
-    setChainPos(5*24+10, 5*24-4);
-    maxMoveSpeed = 450;
-    untilTargetPos(15, 1000);
-    wings.extBLWing(); // descore triball 3
-    setChainPos(5*24-5, 5*24+7);
-    maxMoveSpeed = 450;
-    untilTargetPos(13.5, 750, true);
-    wings.retBLWing();
-    setChainPos(4*24+2, 5*24+16);
-    maxMoveSpeed = 600;
-    untilTargetPos(5, 750, true);
-
-    botMove(10, 600);
+    driveMode = 1; // intake ball 2
+    boomerAng = false;
+    setTargetPos(3*24+3, 3*24+6);
+    maxMoveSpeed = 0;
+    untilTargetH(5, 2000, true);
     wings.retBRWing();
-    driveMode = 1;
-    driveDisabled = true;
-    drive.moveVelocityLeft(600);
-    drive.moveVelocityRight(-600);
-    pros::delay(250);
-    driveDisabled = false;
-    setTargetPos(xPos-20, yPos+7); // turn around
-    maxMoveSpeed = 0;
-    untilTargetH(30, 2000);
-    intake.moveVelocity(-200);
-    untilTargetH(10, 2000);
-    botMove(positionError(4*24+2, 5*24+16), 600);
-    botMove(-15, 2000);
+    maxMoveSpeed = 600;
+    int t = 1500;
+    int stalledStates = 0;
+    while (positionError(targetX, targetY) > 5 && t > 0) {
+        if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || fabs(drive.imu.get_roll()) > 15) && t < 1000) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 2) break;
+        if (intake.hasTriball()) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    // untilTargetPos(3, 2000, true);
+    botMove(-10, 600);
 
-    setTargetPos(4*24+2, 3*24+8); // aim for and intake triball 4
-    setChainPos(4*24+10, 4*24+8);
+    driveMode = 1; // push balls in
+    boomerAng = false;
+    setTargetPos(3*24+12, 5*24+3, 0);
     maxMoveSpeed = 0;
-    untilTargetH(15, 2000);
+    untilTargetH(15, 2000, true);
+    boomerAng = true;
+    intake.moveVelocity(-200);
+    wings.extFLWing();
+    maxMoveSpeed = 600;
+    minMoveSpeed = 600;
+    t = 1500;
+    stalledStates = 0;
+    while (t > 0) {
+        if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || drive.imu.get_roll() > 7.5) && t < 1000) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 2) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    minMoveSpeed = 0;
+    // driveDisabled = true;
+    // drive.moveVelocityLeft(600);
+    // drive.moveVelocityRight(600);
+    // untilTargetPos(-1, 1500, true, 2);
+    // driveDisabled = false;
+    wings.retFLWing();
+    intake.moveVelocity(-50);
+    botMove(-5, 450);
+
+    driveMode = 2; // come back
+    boomerAng = true;
+    setTargetPos(5*24+8, 4*24+11, 250);
+    maxMoveSpeed = 600;
+    untilTargetPos(8, 2500, true, 5, targetX, targetY);
+
+    driveMode = 1; // intake triball 3(alley)
+    boomerAng = true;
+    setTargetPos(5*24+10, 3*24+10, 180);
+    maxMoveSpeed = 0;
+    untilTargetH(15, 1500, 0, true, 5, targetX, targetY);
     intake.moveVelocity(200);
     maxMoveSpeed = 600;
-    untilTargetPos(25, 2000);
-    setChainPos(4*24+2, 3*24+8);
+    untilTargetPos(5, 2000, true, 5, targetX, targetY);
+
+    driveMode = 2; // alley triball 4 + alliance
+    boomerAng = false;
+    wings.extBRWing();
+    setTargetPos(4*24, 5*24+12, 90);
+    setChainPos(5*24+12, 4*24+11);
     maxMoveSpeed = 600;
-    untilTargetPos(5, 1000);
+    untilTargetPos(15, 2000, true, 5);
+    setChainPos(5*24, 5*24+10);
+    // maxMoveSpeed = 0;
+    // untilTargetH(5, 2000, 0, true);
+    wings.extBLWing();
+    maxMoveSpeed = 600;
+    untilTargetPos(10, 2000, true);
+    boomerAng = true;
+    wings.retBLWing();
+    setTargetPos(4*24, 5*24+12, 90);
+    maxMoveSpeed = 600;
+    minMoveSpeed = 600;
+    untilTargetPos(8, 2500, true, 2, targetX, targetY);
+    wings.retBRWing();
+    minMoveSpeed = 0;
+    botMove(10, 600);
 
-    setTargetPos(3*24+16, 5*24); // score triball 4
+    driveMode = 1;
+    boomerAng = false;
+    setTargetPos(4*24-3, 5*24+16); // turn around and score triball 3
     maxMoveSpeed = 0;
-    untilTargetH(15, 2000);
+    untilTargetH(10, 1500, 0, true, 5);
     intake.moveVelocity(-200);
-    wings.extFrontWings();
-    maxMoveSpeed = 450;
-    untilTargetPos(5, 1250);
-    wings.retFrontWings();
+    maxMoveSpeed = 600;
+    minMoveSpeed = 600;
+    t = 1500;
+    stalledStates = 0;
+    while (t > 0) {
+        if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || drive.imu.get_roll() > 7.5) && t < 1000) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 2) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    // untilTargetPos(-1, 1500, true, 2);
+    minMoveSpeed = 0;
+    botMove(-5, 600);
 
-    // botMove(-15, 600); // intake triball 5
-    // setTargetPos(3*24+1, 3*24+8);
-    // maxMoveSpeed = 0;
-    // untilTargetH(15, 2000);
-    // intake.moveVelocity(200);
-    // maxMoveSpeed = 450;
-    // untilTargetPos(5, 2000);
+    driveMode = 2; // intake triball 5
+    boomerAng = true;
+    setTargetPos(4*24, 4*24+4, 45);
+    maxMoveSpeed = 600;
+    untilTargetPos(8, 2500, true, 5, targetX, targetY);
+    driveMode = 1;
+    boomerAng = false;
+    intake.moveVelocity(200);
+    setTargetPos(4*24+1, 3*24+3);
+    maxMoveSpeed = 0;
+    untilTargetH(10, 2000, 0, true, 5);
+    setTargetPos(4*24, 3*24+8);
+    maxMoveSpeed = 600;
+    t = 1500;
+    stalledStates = 0;
+    while (positionError(targetX, targetY) > 5 && t > 0) {
+        if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || fabs(drive.imu.get_roll()) > 15) && t < 1000) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 2) break;
+        if (intake.hasTriball()) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    botMove(-5, 450);
 
-    // setTargetPos(3*24+5, 5*24); // score triball 5
-    // maxMoveSpeed = 0;
-    // untilTargetH(15, 2000);
-    // intake.moveVelocity(-200);
-    // wings.extFrontWings();
-    // maxMoveSpeed = 600;
-    // untilTargetPos(5, 1250);
-    // wings.retFrontWings();
+    driveMode = 1; // score triball 5
+    setTargetPos(3*24, 4*24+12);
+    maxMoveSpeed = 0;
+    untilTargetH(15, 2000, true);
+    boomerAng = true;
+    setTargetPos(3*24+12, 5*24+3, 0);
+    intake.moveVelocity(-200);
+    wings.extFLWing();
+    maxMoveSpeed = 600;
+    minMoveSpeed = 600;
+    // untilTargetPos(-1, 1500, true, 2);
+    t = 1500;
+    stalledStates = 0;
+    while (t > 0) {
+        if ((sqrt(deltaX*deltaX+deltaY*deltaY) < 0.02 || drive.imu.get_roll() > 7.5) && t < 1000) stalledStates++;
+        else stalledStates = 0;
+        if (stalledStates > 2) break;
+        t -= 10;
+        pros::delay(10);
+    }
+    minMoveSpeed = 0;
+    wings.retFLWing();
+    intake.moveVelocity(0);
 
-    botMove(-20, 600);
-    
+    driveMode = 2; // move into blocking position
+    boomerAng = false;
+    setTargetPos(3*24+12, 3*24+12);
+    maxMoveSpeed = 600;
+    untilTargetPos(10, 2000, true, 5);
+    driveMode = 1;
+    setTargetPos(xPos-200, yPos);
+    maxMoveSpeed = 0;
+    untilTargetH(5, 2000, 250, true, 5);
+    driveMode = 1;
+
     driveDisabled = true;
-    driveMode = 0;
-    maxMoveSpeed = 450;
     print_task.suspend();
     drive.stop();
     pros::delay(500);
-    controller.print(0, 0, "%.0f                             ", (pros::millis() - start));
+    controller.print(0, 0, "%.0f                             ", (pros::millis() - start-500));
     pros::delay(500);
     controller.print(1, 0, "X: %.1f Y: %.1f H: %.1f          ", xPos, yPos, drive.imu.get_heading());
     pros::delay(4000);
