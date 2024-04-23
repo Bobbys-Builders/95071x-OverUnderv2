@@ -152,6 +152,11 @@ void opcontrol() {
 	print_task.resume();
 	drive_auto_task.suspend();
 
+	if (curSelected != 4) {
+		wings.retBackWings();
+		wings.retFrontWings();
+	}
+
 	while (true) {
 		moveDrive();
 		// weightedDrive();
