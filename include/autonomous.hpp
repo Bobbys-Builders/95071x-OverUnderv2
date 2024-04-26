@@ -942,7 +942,7 @@ void farSafe6Auton() {
     drive.hold();
 
     intake.moveVelocity(200); // deploy intake
-    // botMove(-5, 450);
+    botMove(-5, 450);
     driveDisabled = true;
     pros::delay(200);
     intake.moveVelocity(200); // intake triball 1
@@ -1107,7 +1107,7 @@ void farSafe6Auton() {
 
     driveMode = 1;
     boomerAng = false;
-    setTargetPos(xPos-200, yPos-45);
+    setTargetPos(xPos-200, yPos-70);
     maxMoveSpeed = 0;
     untilTargetH(5, 2000, true);
 

@@ -27,7 +27,7 @@ public:
     }
 
     bool hasTriball() {
-        return (INTOptical.get_proximity() > 50) && INTOptical.get_proximity() != 0;
+        return (INTOptical.get_proximity() > 100) && INTOptical.get_proximity() != 0;
     }
 
     // control
