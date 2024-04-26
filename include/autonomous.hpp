@@ -1841,7 +1841,7 @@ void skillsSegA() {
     boomerAng = false;
 
     intake.moveVelocity(-200); // ram in triballs
-    kicker.target = 170;
+    // kicker.target = 170;
     driveDisabled = true;
     drive.moveVelocityLeft(-400);
     drive.moveVelocityRight(-600);
@@ -1859,7 +1859,7 @@ void skillsSegA() {
     kicker.moveVelocity(170);
 
     driveMode = 1;
-    setTargetPos(3*24-12, 5*24);
+    setTargetPos(3*24-6, 5*24);
     maxMoveSpeed = 0;
     untilTargetH(15, 2000);
     wings.extBRWing();
@@ -1888,7 +1888,7 @@ void skillsAuton() {
     boomerAng = false;
 
     intake.moveVelocity(-200); // ram in triballs
-    kicker.target = 170;
+    // kicker.target = 170;
     driveDisabled = true;
     drive.moveVelocityLeft(-400);
     drive.moveVelocityRight(-600);
@@ -1901,23 +1901,23 @@ void skillsAuton() {
     untilTargetPos(3, 1000);
 
     driveMode = 1; // move to shooting position
-    kicker.target = 170;
-    kicker.velocity = 170;
-    kicker.moveVelocity(170);
+    kicker.target = 150;
+    kicker.velocity = 150;
+    kicker.moveVelocity(150);
 
     driveMode = 1;
-    setTargetPos(3*24-12, 5*24);
+    setTargetPos(3*24-6, 5*24);
     maxMoveSpeed = 0;
     untilTargetH(15, 2000);
     wings.extBRWing();
     untilTargetH(5, 2000);
     botMove(-5, 450);
     int t = 0;
-    while(t < 2500) {
-//    while(t < 18000) {
-        kicker.target = 170;
-        kicker.velocity = 170;
-        kicker.moveVelocity(170);
+    // while(t < 2500) {
+    while(t < 22000) {
+        kicker.target = 150;
+        kicker.velocity = 150;
+        kicker.moveVelocity(150);
         intake.moveVelocity(-200);
         // if (t == 10000) setTargetPos(3*24-0.5, 5*24);
 
@@ -1936,7 +1936,7 @@ void skillsAuton() {
     untilTargetPos(15, 2000);
     wings.extFrontWings();
     boomerAng = true;
-    setChainPos(1*24+6, 3*24-12);
+    setChainPos(1*24+10, 3*24-12);
     maxMoveSpeed = 600;
     untilTargetPos(3, 3000, true, 5, targetX, targetY);
     // untilTargetH(15, 3000, 0, true, 5, targetX, targetY);
@@ -1946,7 +1946,7 @@ void skillsAuton() {
     // driveDisabled = false;
 
     driveDisabled = true;
-    botMove(-15, 450);
+    botMove(-11, 450);
     botMove(xPos-(1*24+8)+10, 600);
     // botMove(positionError(targetX, targetY)*cos(headingError(targetX, targetY)*RADIANS_DEGREE), 600);
     intake.moveVelocity(200);
@@ -2077,8 +2077,12 @@ void skillsAuton() {
     boomerAng = true;
     setTargetPos(3*24+12, 5*24, 0);
     maxMoveSpeed = 600;
-    untilTargetPos(3, 2000, true, 5, targetX, targetY);
+    untilTargetPos(5, 2000, true, 5, targetX, targetY);
     botMove(8, 450);
+    boomerAng = false;
+    setTargetPos(xPos, yPos+200);
+    maxMoveSpeed = 600;
+    untilTargetH(5, 1000);
     driveDisabled = true;
     drive.moveVelocityLeft(-600);
     drive.moveVelocityRight(-600);

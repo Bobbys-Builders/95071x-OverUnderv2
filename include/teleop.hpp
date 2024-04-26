@@ -201,7 +201,7 @@ void moveKicker() {
 			kicker.target = 0;
 			break;
 		case 1:
-			kicker.target = 170;
+			kicker.target = 150;
 			break;
 		// case 2:
 		// 	kicker.target = 100;
