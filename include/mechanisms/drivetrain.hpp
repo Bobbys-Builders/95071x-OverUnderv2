@@ -12,23 +12,15 @@ public:
     pros::Motor MRMotor;
     pros::Motor BRMotor;
 
-    pros::Rotation vOdom;
-    pros::Rotation hOdom;
-    pros::ADIDigitalOut odomPiston;
-
-    double lastVOdom = 0;
-    double lastHOdom = 0;
 
     pros::IMU imu;
 
     // constructor
-    Drivetrain (int FL_PORT, int ML_PORT, int BL_PORT, int FR_PORT, int MR_PORT, int BR_PORT, int IMU_PORT, int VODOM_PORT, int HODOM_PORT, int EXP_PORT, char ODOM_PORT) : 
+    Drivetrain (int FL_PORT, int ML_PORT, int BL_PORT, int FR_PORT, int MR_PORT, int BR_PORT, int IMU_PORT, int EXP_PORT, char ODOM_PORT) : 
     FLMotor(FL_PORT, MOTOR_GEARSET_06, false), MLMotor(ML_PORT, MOTOR_GEARSET_06, false), BLMotor(BL_PORT, MOTOR_GEARSET_06, true), 
     FRMotor(FR_PORT, MOTOR_GEARSET_06, true), MRMotor(MR_PORT, MOTOR_GEARSET_06, true), BRMotor(BR_PORT, MOTOR_GEARSET_06, false), 
     imu(IMU_PORT), vOdom(VODOM_PORT, true), hOdom(HODOM_PORT, false), odomPiston(ODOM_PORT)
     {
-        vOdom.reset_position();
-        hOdom.reset_position();
         FLMotor.set_current_limit(2500);
         MLMotor.set_current_limit(2500);
         BLMotor.set_current_limit(2500);
