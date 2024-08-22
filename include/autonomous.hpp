@@ -14,8 +14,6 @@ void auton1() {
     driveDisabled = false;
     drive.stop();
     drive.hold();
-
-    intake.moveVelocity(-600); // deploy intake
     
     print_task.suspend();
     drive.stop();
@@ -38,23 +36,20 @@ void preauton1() {
     // maxTurnConstant = 35;
     maxMoveSpeed = 450;
     drive.stop();
-
 }
 
-    // bryan has a skill issue
-	switch (curSelected) {
-        case 1:
-        noAuton();
-        break;
+// bryan has a skill issue
+switch (curSelected) {
+    case 1:
+    noAuton();
+    break;
 
-        case 2:
-        auton1();
-        break;
+    case 2:
+    auton1();
+    break;
 
-        case 3:
-        preauton1();
-        break;
-	}
+    case 3:
+    preauton1();
+    break;
 }
-
 #endif

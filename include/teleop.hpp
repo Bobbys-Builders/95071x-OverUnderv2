@@ -40,28 +40,6 @@ bool updateButtons() {
 
 bool frontWingsDown = false;
 bool backWingsDown = false;
-void moveWings() {
-	if (controller.get_digital(DIGITAL_L1) && !L1Mode) {
-		frontWingsDown = !frontWingsDown;
-		if (frontWingsDown) {
-			wings.retBackWings();
-			backWingsDown = false;
-			wings.extFrontWings();
-		} else {
-			wings.retFrontWings();
-		}
-	}
-	if (controller.get_digital(DIGITAL_L2) && !L2Mode) {
-		backWingsDown = !backWingsDown;
-		if (backWingsDown) {
-			wings.retFrontWings();
-			frontWingsDown = false;
-			wings.extBackWings();
-		} else {
-			wings.retBackWings();
-		}
-	}
-}
 
 bool climbUp = false;
 void moveClimb() {
@@ -179,25 +157,5 @@ void moveIntake() {
 	}
 }
 
-int kickerMode = 0;
-void moveKicker() {
-    if (controller.get_digital(DIGITAL_DOWN) && controller.get_digital(DIGITAL_R2) && !R2Mode) {
-		if (kickerMode == 1) kickerMode = 0;
-		// else if (kickerMode == 2) kickerMode = 0;
-		else kickerMode = 1;
-	}
-
-	switch (kickerMode) {
-		case 0:
-			kicker.target = 0;
-			break;
-		case 1:
-			kicker.target = 170;
-			break;
-		// case 2:
-		// 	kicker.target = 100;
-		// 	break;
-	}
-}
 
 #endif
