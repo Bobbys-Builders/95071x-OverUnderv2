@@ -4,8 +4,7 @@
 #include "main.h"
 #include "mechanisms/drivetrain.hpp"
 #include "mechanisms/intake.hpp"
-#include "mechanisms/kicker.hpp"
-#include "mechanisms/wings.hpp"
+
 #include "mechanisms/climb.hpp"
 #include "pid.hpp"
 
